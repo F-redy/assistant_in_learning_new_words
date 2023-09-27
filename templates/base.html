@@ -8,9 +8,28 @@
 </head>
 <body>
 
-{% block menu %} {% endblock %}
+{% block menu %}
+    <div class="header">
+        <ul id="mainmenu" class="mainmenu">
+            <li><a href="{% url 'home' %}">Главная страница</a></li>
 
-<h1>English it's easy</h1>
+            <li class="authenticated">
+                {% if request.user.is_authenticated %}
+                    <li class="last">{{ user.username }} | <a href="{% url 'users:logout' %}">Выйти</a></li>
+                    {% if request.user.is_superuser %}
+                        <li><a href="{% url 'admin:index' %}">
+                            <button>AdminSite</button>
+                        </a></li>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'users:signup' %}">Регистрация</a> | <a href="{% url 'users:login' %}">Войти</a>
+                {% endif %}
+
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
 
 {% block content %} {% endblock %}
 
