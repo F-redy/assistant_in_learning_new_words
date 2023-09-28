@@ -1,10 +1,11 @@
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.views import LoginView  # Авторизация пользователя
 
-from users.forms import CustomUserCreationForm, CustomAuthenticationForm
+from users.forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm
+from users.models import CustomUser
 
 
 class SignUpView(CreateView):
@@ -34,6 +35,20 @@ class LogInView(LoginView):
         context["title"] = "Log In"
 
         return context
+
+
+class UserUpdateView(UpdateView):
+    model = CustomUser
+    form_class = CustomUserChangeForm
+    template_name = "users/profile.html"
+
+    def get_success_url(self):
+        return reverse_lazy("users:profile", args=(self.object.id,))
+
+    def form_valid(self, form):
+        # Сохраняем обновленные данные пользователя
+        form.save()
+        return super().form_valid(form)
 
 
 def logout_and_redirect_to_login(request):
