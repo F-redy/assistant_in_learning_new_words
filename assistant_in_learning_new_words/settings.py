@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
 
     'users.apps.UsersConfig',
+    'words.apps.WordsConfig',
 
 ]
 
