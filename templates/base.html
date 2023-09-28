@@ -15,7 +15,9 @@
 
             <li class="authenticated">
                 {% if request.user.is_authenticated %}
-                    <li class="last">{{ user.username }} | <a href="{% url 'users:logout' %}">Выйти</a></li>
+                    <li class="last"><a href="{% url "users:profile" user.id %}">{{ user.username }}</a> 
+                        |
+                        <a href="{% url 'users:logout' %}">Выйти</a></li>
                     {% if request.user.is_superuser %}
                         <li><a href="{% url 'admin:index' %}">
                             <button>AdminSite</button>
