@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <p>
+            <a href="{% url 'words:add_new_words' %}">
+                <input type="submit" value="Cancel Import">
+            </a>
+        </p>
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-error">{{ form.non_field_errors }}</div>
+
+            <div>
+                <p>
+                    Select Dictionary: {{ form.dictionary }}
+                </p>
+            </div>
+
+            <div>
+                <p>
+                    Import Words: {{ form.text }}
+                </p>
+            </div>
+
+            <div>
+                Separator: {{ form.sep_choice }}
+                <p>{{ form.custom_sep }}</p>
+            </div>
+
+
+            <button type="submit">Import Words</button>
+
+        </form>
+
+    </div>
+{% endblock %}
