@@ -100,11 +100,11 @@ WSGI_APPLICATION = 'assistant_in_learning_new_words.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DATABASES_NAME'),  # Название вашей базы данных
-        'USER': env('DATABASES_USER'),  # Пользователь PostgreSQL
-        'PASSWORD': env('DATABASES_PASSWORD'),  # Пароль пользователя PostgreSQL
-        'HOST': env('DATABASES_HOST'),  # Хост, на котором работает PostgreSQL
-        'PORT': env('DATABASES_PORT'),  # Порт PostgreSQL (по умолчанию 5432)
+        'NAME': env('DATABASES_NAME'),
+        'USER': env('DATABASES_USER'),
+        'PASSWORD': env('DATABASES_PASSWORD'),
+        'HOST': env('DATABASES_HOST'),
+        'PORT': env('DATABASES_PORT'),
     }
 }
 
@@ -141,8 +141,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static/'
-STATICFILES_DIRS = []
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media/'
@@ -155,3 +154,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Users
 
 AUTH_USER_MODEL = 'users.CustomUser'
+LOGIN_URL = '/users/login/'  # используется при использовании декоратора @login_required
+LOGIN_REDIRECT_URL = '/'  # куда перенаправлять пользователя после авторизации
+LOGOUT_REDIRECT_URL = '/users/login/'  # куда перенаправлять пользователя после выхода из системы
