@@ -1,0 +1,26 @@
+/* Стили для горизонтального меню */
+ul.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    text-align: center; /* Выравнивание по центру */
+}
+
+ul.menu li {
+    display: inline;
+    margin-right: 10px; /* Расстояние между пунктами меню */
+}
+
+ul.menu a {
+    text-decoration: none;
+}
+
+/* Опциональные стили для кнопки AdminSite */
+ul.menu button {
+    padding: 5px 10px;
+}
+
+/* Стили для выравнивания элемента по правой стороне */
+ul.menu .right-align {
+    float: right;
+}
