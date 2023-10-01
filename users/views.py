@@ -1,5 +1,5 @@
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.views import LoginView  # Авторизация пользователя
@@ -44,11 +44,6 @@ class UserUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("users:profile", args=(self.object.id,))
-
-    def form_valid(self, form):
-        # Сохраняем обновленные данные пользователя
-        form.save()
-        return super().form_valid(form)
 
 
 def logout_and_redirect_to_login(request):
