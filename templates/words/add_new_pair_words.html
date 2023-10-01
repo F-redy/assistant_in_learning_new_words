@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div>
+        <div>
+            <a href="{% url 'words:import_new_words' %}">
+                <input type="submit" value="Import Words">
+            </a>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+
+            <div><p>{{ form.dictionary }}</p></div>
+
+
+            <div id="word-fields">
+                <!-- Первая пара полей -->
+                <p>
+                    {{ form.original_word }} {{ form.translation_word }}
+                </p>
+            </div>
+
+            <button type="button" id="add-word-button">Add more words</button>
+            <input type="submit" value="Save Dictionary">
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var canAddField = true;  // Флаг, разрешающий добавление новых полей
+
+            $("#add-word-button").click(function () {
+                if (canAddField) {
+                    var originalWord = $("input[name='original_word']").last();
+                    var translationWord = $("input[name='translation_word']").last();
+
+                    // Проверяем, что последние поля не пустые
+                    if (originalWord.val() !== "" && translationWord.val() !== "") {
+                        var newWordField = `
+                            <p>
+                                {{ form.original_word }} {{ form.translation_word }}
+                                <button type="button" class="remove-word-button">Remove</button>
+                            </p>
+                        `;
+                        $("#word-fields").append(newWordField);
+
+                        // Добавляем обработчик для кнопки "Remove"
+                        $(".remove-word-button").last().click(function () {
+                            $(this).parent().remove();
+                        });
+                    } else {
+                        alert("Заполните предыдущую пару слов перед добавлением новой.");
+                        canAddField = false;  // Запретить добавление новых полей
+                    }
+                }
+            });
+
+            // Вешаем обработчик на изменение текущих полей
+            $(document).on("input", "input[name='original_word'], input[name='translation_word']", function () {
+                canAddField = true;  // Разрешить добавление новых полей после заполнения текущих
+            });
+        });
+    </script>
+{% endblock %}
