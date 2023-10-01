@@ -1,10 +1,11 @@
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.views import LoginView  # Авторизация пользователя
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
-from django.contrib.auth.views import LoginView  # Авторизация пользователя
 
-from users.forms import CustomUserCreationForm, CustomAuthenticationForm, CustomUserChangeForm
+from users.forms import (CustomAuthenticationForm, CustomUserChangeForm,
+                         CustomUserCreationForm)
 from users.models import CustomUser
 
 

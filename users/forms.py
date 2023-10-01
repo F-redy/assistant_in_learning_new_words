@@ -1,5 +1,6 @@
+from django.contrib.auth.forms import (AuthenticationForm, UserChangeForm,
+                                       UserCreationForm)
 from django.forms import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm, AuthenticationForm
 
 from users.models import CustomUser
 

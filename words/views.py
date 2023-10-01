@@ -1,10 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.urls import reverse_lazy, reverse
-from django.views.generic import DetailView, ListView, CreateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DetailView, ListView
 
 from common.views import DataMixin
-from .models import Dictionary, PairWord
+
 from .forms import AddDictionaryForm, AddPairWordForm, ImportWordsForm
+from .models import Dictionary, PairWord
 
 
 class AddDictionaryView(DataMixin, CreateView):
