@@ -3,7 +3,7 @@
 {% block content %}
 
     <div>
-        <h1>Profile {{ customuser.username }}</h1>
+        <h1>Profile {{ user.username }}</h1>
         <form action="{% url 'users:profile' user.id %}" method="post">
             {% csrf_token %}
             <div>
@@ -16,18 +16,6 @@
                 <p>
                     <label for="{{ form.email.id_for_label }}">Email</label>
                     {{ form.email }}
-                </p>
-            </div>
-            <div>
-                <p>
-                    <label for="{{ form.native_language.id_for_label }}">Native Language</label>
-                    {{ form.native_language }}
-                </p>
-            </div>
-            <div>
-                <p>
-                    <label for="{{ form.language_to_learn.id_for_label }}">Language to learn</label>
-                    {{ form.language_to_learn }}
                 </p>
             </div>
             <div>
