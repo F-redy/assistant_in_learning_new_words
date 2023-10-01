@@ -1,33 +1,50 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
     {% block title %}
         <title>{{ title }}</title>
+    {% endblock %}
+
+    {% block css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles_menu.css' %}">
     {% endblock %}
 </head>
 <body>
 
 {% block menu %}
-    <div class="header">
-        <ul id="mainmenu" class="mainmenu">
-            <li><a href="{% url 'home' %}">Главная страница</a></li>
+    <div>
+        <ul class="menu">
+            <li><a href="{% url 'home' %}">home</a></li>
 
-            <li class="authenticated">
-                {% if request.user.is_authenticated %}
-                    <li class="last"><a href="{% url "users:profile" user.id %}">{{ user.username }}</a> 
-                        |
-                        <a href="{% url 'users:logout' %}">Выйти</a></li>
-                    {% if request.user.is_superuser %}
-                        <li><a href="{% url 'admin:index' %}">
-                            <button>AdminSite</button>
-                        </a></li>
-                    {% endif %}
-                {% else %}
-                    <a href="{% url 'users:signup' %}">Регистрация</a> | <a href="{% url 'users:login' %}">Войти</a>
+
+            {% if request.user.is_authenticated %}
+
+                <li><a href="{% url 'words:add_dictionary' %}"> add new dictionary</a></li>
+                <li><a href="{% url 'words:add_new_words' %}"> add new words</a></li>
+
+                <li><a href="{% url 'words:show_dictionaries' %}"> all dictionaries</a></li>
+
+                <li class="right-align">
+                    <a href="{% url 'users:profile' user.id %}">{{ user.username }}</a>
+                    |
+                    <a href="{% url 'users:logout' %}">Выйти</a>
+                </li>
+
+                {% if request.user.is_superuser %}
+                    <li><a href="{% url 'admin:index' %}">
+                        <button>AdminSite</button>
+                    </a></li>
                 {% endif %}
 
-            </li>
+            {% else %}
+                <a href="{% url 'users:signup' %}">Регистрация</a> | <a href="{% url 'users:login' %}">Войти</a>
+            {% endif %}
+
+
         </ul>
     </div>
 {% endblock %}
