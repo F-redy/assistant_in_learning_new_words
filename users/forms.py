@@ -10,14 +10,14 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser
         # Поля, которые будут отображены
-        fields = ("username", "email", "phone", "native_language", "language_to_learn")
+        fields = ("username", "email", "phone")
 
 
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         # Поля, которые будут отображены
-        fields = ("username", "email", "phone", "native_language", "language_to_learn")
+        fields = ("username", "email", "phone")
 
 
 class CustomAuthenticationForm(AuthenticationForm):
