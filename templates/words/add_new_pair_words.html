@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
     <div>
+    <h1>Add New Words</h1>
         <div>
             <a href="{% url 'words:import_new_words' %}">
                 <input type="submit" value="Import Words">

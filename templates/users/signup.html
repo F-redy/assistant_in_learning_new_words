@@ -5,7 +5,15 @@
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Sign Up</button>
+            <p>
+                <button type="submit">Sign Up</button>
+            </p>
         </form>
+        <p>
+            <a href="{% url 'users:login' %}">
+                <button type="submit">Log In</button>
+
+            </a>
+        </p>
     </div>
 {% endblock %}
