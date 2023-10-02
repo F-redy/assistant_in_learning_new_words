@@ -1,18 +1,34 @@
+.menu-wrapper {
+    display: flex;
+    justify-content: center;
+    /* шрифт */
+    font-family: espiritu, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+}
+
 /* Стили для горизонтального меню */
 ul.menu {
+    width: 50%;
     list-style-type: none;
-    margin: 0;
-    padding: 0;
-    text-align: center; /* Выравнивание по центру */
+    margin: 20px 30px 30px 30px;
+    padding: 5px;
+    border-bottom: 2px solid rgba(225, 224, 224, 0.6);
 }
 
 ul.menu li {
     display: inline;
-    margin-right: 10px; /* Расстояние между пунктами меню */
+    margin-right: 15px; /* Расстояние между пунктами меню */
 }
 
 ul.menu a {
     text-decoration: none;
+    color: #333; /* Цвет текста пунктов меню по умолчанию */
+    transition: color 0.3s; /* Плавное изменение цвета текста при наведении */
+}
+
+ul.menu a:hover {
+    color: #ff6600; /* Цвет текста при наведении */
 }
 
 /* Опциональные стили для кнопки AdminSite */
