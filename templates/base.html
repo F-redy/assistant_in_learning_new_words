@@ -11,46 +11,18 @@
 
     {% block css %}
         <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles_menu.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles.css' %}">
     {% endblock %}
 </head>
 <body>
-
-{% block menu %}
-    <div>
-        <ul class="menu">
-            <li><a href="{% url 'home' %}">home</a></li>
-
-
-            {% if request.user.is_authenticated %}
-
-                <li><a href="{% url 'words:add_dictionary' %}"> add new dictionary</a></li>
-                <li><a href="{% url 'words:add_new_words' %}"> add new words</a></li>
-
-                <li><a href="{% url 'words:show_dictionaries' %}"> all dictionaries</a></li>
-
-                <li class="right-align">
-                    <a href="{% url 'users:profile' user.id %}">{{ user.username }}</a>
-                    |
-                    <a href="{% url 'users:logout' %}">Выйти</a>
-                </li>
-
-                {% if request.user.is_superuser %}
-                    <li><a href="{% url 'admin:index' %}">
-                        <button>AdminSite</button>
-                    </a></li>
-                {% endif %}
-
-            {% else %}
-                <a href="{% url 'users:signup' %}">Регистрация</a> | <a href="{% url 'users:login' %}">Войти</a>
-            {% endif %}
+<div class="body-wrapper">
+    {% block menu %}
+        <!-- nav bar !-->
+        {% include 'inc/_nav.html' %}
+    {% endblock %}
 
 
-        </ul>
-    </div>
-{% endblock %}
-
-
-{% block content %} {% endblock %}
-
+    {% block content %} {% endblock %}
+</div>
 </body>
 </html>
