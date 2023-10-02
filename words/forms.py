@@ -18,13 +18,13 @@ class AddPairWordForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['dictionary'].empty_label = 'No dictionary selected'
 
-    class Meta:
-        model = PairWord
-        fields = ('original_word', 'translation_word', 'dictionary')
-
     original_word = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'placeholder': 'original word'}))
     translation_word = forms.CharField(max_length=150,
                                        widget=forms.TextInput(attrs={'placeholder': 'translation word'}))
+
+    class Meta:
+        model = PairWord
+        fields = ('original_word', 'translation_word', 'dictionary')
 
 
 class ImportWordsForm(forms.ModelForm):
