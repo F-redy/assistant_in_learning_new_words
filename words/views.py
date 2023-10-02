@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView
+from django.db.models import Count
 
 from common.views import DataMixin
 
@@ -84,7 +85,12 @@ class ShowAllDictionaryUserView(DataMixin, ListView):
     title = 'All Your Dictionaries'
 
     def get_queryset(self):
-        return Dictionary.objects.filter(user_id=self.request.user.pk)
+        # Получаем все словари пользователя
+        dictionaries = Dictionary.objects.filter(user_id=self.request.user.pk)
+
+        # Аннотируем каждый словарь количеством слов в нем
+        dictionaries = dictionaries.annotate(count_words=Count('pairword'))
+        return dictionaries
 
 
 class ShowDictionaryView(DetailView):
