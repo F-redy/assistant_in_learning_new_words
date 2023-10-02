@@ -1,0 +1,33 @@
+<div class="menu-wrapper">
+    <ul class="menu">
+        <li><a href="{% url 'home' %}">home</a></li>
+
+
+        {% if request.user.is_authenticated %}
+
+            <li><a href="{% url 'words:add_dictionary' %}"> new dictionary</a></li>
+            <li><a href="{% url 'words:add_new_words' %}"> new words</a></li>
+
+            <li><a href="{% url 'words:show_dictionaries' %}"> dictionaries</a></li>
+
+            <li class="right-align">
+                <a href="{% url 'users:profile' user.id %}">{{ user.username }}</a>
+                |
+                <a href="{% url 'users:logout' %}">Logout</a>
+            </li>
+
+            {% if request.user.is_superuser %}
+                <li><a href="{% url 'admin:index' %}">
+                    <button>AdminSite</button>
+                </a></li>
+            {% endif %}
+
+        {% else %}
+            <li class="right-align">
+                <a href="{% url 'users:signup' %}">Sign Up</a> | <a href="{% url 'users:login' %}">Log In</a>
+            </li>
+        {% endif %}
+
+
+    </ul>
+</div>
