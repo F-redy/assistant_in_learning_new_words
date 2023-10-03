@@ -2,6 +2,8 @@
 
 {% block content %}
     <div>
+        <h1>Add New Dictionary</h1>
+
         <form method="post">
             {% csrf_token %}
             <div>
@@ -9,7 +11,9 @@
                     {{ form.title }}
                 </p>
             </div>
-            <button type="submit">Add Dictionary</button>
+            <p>
+                <button type="submit">Add Dictionary</button>
+            </p>
         </form>
     </div>
 {% endblock %}
