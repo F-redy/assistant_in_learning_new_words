@@ -7,6 +7,38 @@
     font-weight: 400;
 }
 
+/* Стили для выпадающего списка */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    z-index: 1;
+    margin-top: 10px; /* Добавьте верхний отступ */
+
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Дополнительные стили для пунктов выпадающего списка (при желании) */
+.dropdown-content li {
+    padding: 10px;
+    text-align: center;
+}
+
+
+.dropdown-content a {
+    text-decoration: none;
+    color: #333;
+}
+
+
 /* Стили для горизонтального меню */
 ul.menu {
     width: 50%;
@@ -23,7 +55,7 @@ ul.menu li {
 
 ul.menu a {
     text-decoration: none;
-    color: #333; /* Цвет текста пунктов меню по умолчанию */
+    color: #eeeeee; /* Цвет текста пунктов меню по умолчанию */
     transition: color 0.3s; /* Плавное изменение цвета текста при наведении */
 }
 
@@ -39,4 +71,5 @@ ul.menu button {
 /* Стили для выравнивания элемента по правой стороне */
 ul.menu .right-align {
     float: right;
+    margin: 0;
 }
