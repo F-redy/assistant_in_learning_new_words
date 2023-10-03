@@ -1,25 +1,36 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+{% endblock %}
 
 {% block content %}
-    <div>
-        <h1>Dictionary: {{ dictionary.title }}</h1>
-        Created: {{ dictionary.created_at }}
 
+    <h1>Dictionary: {{ dictionary.title }}</h1>
+
+    <span class="time-created">Created: {{ dictionary.created_at }}</span>
+
+    <div class="centered-image">
         {% if dictionary.image %}
             <img src="{{ object.image.url }}" alt="dictionary image">
         {% else %}
-            <img src="{% static 'my_project/dictionary/img/words_header.png' %}" alt="dictionary image"
-                 width="100" height="50">
+            <img src="{% static 'my_project/dictionary/img/words_header.png' %}" alt="dictionary image">
         {% endif %}
     </div>
 
-    <div>
+    <div class="words">
         <ul>
             {% for pair in word_list %}
-                <li> {{ pair.original }} - {{ pair.translation }} </li>
+                <li>
+                    <div class="word-pair">
+                        <span class="word">{{ pair.original }}</span>
+                        <span class="separator"> | </span>
+                        <span class="word">{{ pair.translation }}</span>
+                    </div>
+                </li>
             {% endfor %}
         </ul>
     </div>
+
 {% endblock %}
