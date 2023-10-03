@@ -9,10 +9,10 @@
         <title>{{ title }}</title>
     {% endblock %}
 
-    {% block css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles_menu.css' %}">
-        <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles.css' %}">
-    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles_menu.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'my_project/css/styles.css' %}">
+    {% block css %} {% endblock %}
+
 </head>
 <body>
 <div class="body-wrapper">
