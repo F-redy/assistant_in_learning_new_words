@@ -3,17 +3,16 @@
 {% block content %}
 
     <div>
-    <h1>Add New Words</h1>
+        <h1>Add New Words</h1>
         <div>
             <a href="{% url 'words:import_new_words' %}">
-                <input type="submit" value="Import Words">
+                <button type="submit">Import Words</button>
             </a>
         </div>
         <form method="post">
             {% csrf_token %}
 
             <div><p>{{ form.dictionary }}</p></div>
-
 
             <div id="word-fields">
                 <!-- Первая пара полей -->
@@ -22,8 +21,14 @@
                 </p>
             </div>
 
-            <button type="button" id="add-word-button">Add more words</button>
-            <input type="submit" value="Save Dictionary">
+            <p>
+                <button type="submit" id="add-word-button">Add more words</button>
+            </p>
+
+            <p>
+                <button type="submit">Save Dictionary</button>
+            </p>
+
         </form>
     </div>
 
@@ -42,7 +47,7 @@
                         var newWordField = `
                             <p>
                                 {{ form.original_word }} {{ form.translation_word }}
-                                <button type="button" class="remove-word-button">Remove</button>
+                                <button type="submit" class="remove-word-button">Remove</button>
                             </p>
                         `;
                         $("#word-fields").append(newWordField);
