@@ -1,0 +1,66 @@
+.time-created {
+    display: flex;
+    justify-content: center;
+    font-family: filmotype-lacrosse, sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    margin-bottom: 5px;
+}
+
+.centered-image {
+    display: flex;
+    flex-direction: column; /* Размещаем текст и изображение вертикально */
+    align-items: center; /* Выравнивание по центру по вертикали */
+    width: 100%; /* 100% ширины родительского контейнера */
+}
+
+.centered-image img {
+    width: 70px;
+    height: 30px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+    vertical-align: middle; /* Выравнивание изображения по центру по вертикали */
+}
+
+img:hover {
+    transform: scale(1.1);
+}
+
+
+
+.words ul {
+    list-style-type: none;
+}
+
+/* Стили для контейнера пары слов */
+.word-pair {
+    display: flex; /* Расположение элементов внутри контейнера в виде строки */
+    justify-content: space-between; /* Равномерное распределение между элементами */
+    align-items: center; /* Выравнивание элементов по центру вертикально */
+    margin: 10px 0; /* Отступы сверху и снизу для пары слов */
+    background-color: #1d2b5b; /* Фоновый цвет контейнера */
+    border: 1px solid #ccc; /* Граница вокруг контейнера */
+    border-radius: 5px; /* Скругленные углы контейнера */
+    padding: 10px; /* Внутренние отступы контейнера */
+}
+
+/* Стили для слова */
+.word {
+    flex: 1; /* Равномерное распределение пространства внутри контейнера */
+    font-style: italic; /* Курсив  */
+    font-size: 20px;
+    color: #fafafa; /* Цвет текста  */
+    border-bottom: 2px solid rgba(232, 204, 51, 0.76); /* Линия под текстом */
+    padding: 5px; /* Внутренние отступы */
+}
+
+/* Стили для разделителя " - " */
+.separator {
+    margin: 0 10px; /* Отступы с обеих сторон разделителя */
+    font-weight: bold; /* Жирный текст для разделителя */
+    color: #888; /* Цвет разделителя */
+}
+
+
