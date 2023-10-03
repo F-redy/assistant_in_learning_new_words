@@ -2,8 +2,43 @@
     width: 80%; /* Ширина обертки */
     height: 90%; /* Увеличьте высоту  */
     margin: 0 auto; /* Центрирование обертки по горизонтали */
-    padding: 20px; /* Отступы внутри обертки по вашему выбору */
-    background-color: rgba(255, 255, 255, 0.97); /* Цвет фона обертки */
+    padding: 20px 40px 20px 20px; /* Отступы внутри обертки по вашему выбору */
+    color: #eeeeee;
+    background-color: rgba(18, 27, 65, 0.97); /* Цвет фона обертки */
     /* Добавление тени */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Горизонтальное смещение, вертикальное смещение, размытие, цвет */
+    border-radius: 15px; /* Закругление углов */
 }
+
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: rgba(255, 255, 255, 0.94);
+    text-shadow: 2px 2px 4px rgba(7, 7, 7, 0.5);
+}
+
+
+input {
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
