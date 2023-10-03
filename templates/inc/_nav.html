@@ -5,8 +5,13 @@
 
         {% if request.user.is_authenticated %}
 
-            <li><a href="{% url 'words:add_dictionary' %}"> new dictionary</a></li>
-            <li><a href="{% url 'words:add_new_words' %}"> new words</a></li>
+            <li class="dropdown">
+                <a href="#">Create</a>
+                <ul class="dropdown-content">
+                    <li><a href="{% url 'words:add_dictionary' %}">New Dictionary</a></li>
+                    <li><a href="{% url 'words:add_new_words' %}">New Words</a></li>
+                </ul>
+            </li>
 
             <li><a href="{% url 'words:show_dictionaries' %}"> dictionaries</a></li>
 
