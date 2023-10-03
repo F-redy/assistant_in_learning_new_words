@@ -1,23 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
     {% if dictionary_list %}
-        {% for dictionary in dictionary_list %}
-            <p>
-                <a href="{{ dictionary.get_absolute_url }}">
-                    <button type="submit">{{ dictionary.title }}</button>
-                </a>
 
-            </p>
+        <h1> Your Dictionaries </h1>
 
-        {% endfor %}
+        <div>
+            {% for dictionary in dictionary_list %}
+
+                <p>
+                    <a href="{{ dictionary.get_absolute_url }}">
+                        <button type="submit">{{ dictionary.title }} <br> words: {{ dictionary.count_words }}</button>
+
+                    </a>
+                </p>
+
+            {% endfor %}
+        </div>
+
     {% else %}
-        <h1>you don't have dictionaries yet</h1>
+
+        <h1>You don't have dictionaries yet</h1>
+
         <a href="{% url 'words:add_dictionary' %}">
             <button type="button">Create Dictionary</button>
         </a>
 
     {% endif %}
-
 
 {% endblock %}
