@@ -52,3 +52,17 @@ class ImportWordsForm(forms.ModelForm):
     class Meta:
         model = PairWord
         fields = ('dictionary', 'text', 'sep_choice', 'custom_sep')
+
+
+class RepeatWordForm(forms.Form):
+    user_answer = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'type': 'text',
+                'style': 'width: 300px;',
+                'autofocus': True,
+                'placeholder': 'Enter your answer...',
+            }),
+        label='Enter translation for ',
+        max_length=100
+    )
