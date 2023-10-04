@@ -7,12 +7,11 @@
             {{ form.as_p }}
             <p>
                 <button type="submit">Log In</button>
+
+                <a href="{% url 'users:signup' %}">
+                    <button type="button">Sign Up</button>
+                </a>
             </p>
         </form>
-        <p>
-            <a href="{% url 'users:signup' %}">
-                <button type="submit">Sign Up</button>
-            </a>
-        </p>
     </div>
 {% endblock %}
