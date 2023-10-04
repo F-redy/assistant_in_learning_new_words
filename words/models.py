@@ -3,7 +3,7 @@ from django.urls import reverse
 
 from users.models import CustomUser
 
-from .utils import Slug
+from words.utils import Slug
 
 
 class Dictionary(models.Model):
