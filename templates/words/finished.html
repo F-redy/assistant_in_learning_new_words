@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Congratulations you are completely finished dictionary!</h1>
+    <p>
+        <a href="{% url 'words:show_dictionaries' %}">
+            <button type="submit">RESET</button>
+        </a>
+
+            <a href="{% url 'words:error_words' %}">
+                <button type="button">LOOK ERRORS</button>
+            </a>
+
+    </p>
+{% endblock %}
