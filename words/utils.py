@@ -24,3 +24,24 @@ class Slug:
         raise TypeError('The phrase must be a string!')
 
 
+def get_sep(form):
+    if not form.cleaned_data.get('custom_sep'):
+        return form.cleaned_data.get('sep_choice')
+
+    return form.cleaned_data.get('custom_sep')
+
+
+def get_existing_originals(db_words) -> set[str]:
+    return set(pair.original for pair in db_words)
+
+
+def get_unique_pairs(text: str, existing_originals: set[str], sep, id_dictionary: int, PairWord):
+    unique_pairs = []
+    for pair in text.split('\n'):
+        try:
+            original, translation = pair.split(sep)
+            if original not in existing_originals:
+                unique_pairs.append(PairWord(original=original, translation=translation, dictionary=id_dictionary))
+        except ValueError:
+            unique_pairs.append(PairWord(original=pair, translation='', dictionary=id_dictionary))
+    return unique_pairs
