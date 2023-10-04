@@ -33,7 +33,7 @@ input:focus {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-button[type="submit"] {
+button {
     background-color: #007bff;
     color: #fff;
     padding: 10px 20px;
@@ -42,3 +42,10 @@ button[type="submit"] {
     cursor: pointer;
 }
 
+.error_message {
+    color: red;
+}
+
+.success_message {
+    color: #03d738;
+}
