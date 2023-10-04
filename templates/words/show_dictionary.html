@@ -9,7 +9,7 @@
 
     <h1>Dictionary: {{ dictionary.title }}</h1>
 
-    <span class="time-created">Created: {{ dictionary.created_at }}</span>
+    <span class="time-created">Created: {{ dictionary.created_at|date:"Y-m-d H:i" }}</span>
 
     <div class="centered-image">
         {% if dictionary.image %}
