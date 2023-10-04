@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+{% endblock %}
+
+{% block content %}
+    <h1>Error Words {{ error_words|length }}</h1>
+    <div class="words">
+        {% if error_words %}
+
+            <ul>
+                {% for original, translation in error_words %}
+                    <li>
+                        <div class="word-pair">
+                            <span class="word">{{ original }}</span>
+                            <span class="separator"> | </span>
+                            <span class="word">{{ translation }}</span>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>You did a good job and you didn't make any mistakes! Keep it up!</p>
+        {% endif %}
+    </div>
+
+{% endblock %}
