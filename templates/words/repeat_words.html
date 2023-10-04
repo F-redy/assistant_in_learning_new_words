@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="error_message"> {{ message }} </div>
+            {% else %}
+                <div class="success_message"> {{ message }} </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>{{ form.user_answer.label_tag }} {{ translation }}</p>
+        {{ form.user_answer }}
+        <p>
+            <button type="submit">Send</button>
+            <a href="{% url 'words:congratulations' %}">
+                <button type="button">RESET</button>
+            </a>
+        </p>
+
+
+    </form>
+
+
+{% endblock %}
+
+
