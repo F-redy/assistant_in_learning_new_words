@@ -11,9 +11,18 @@
 
                 <p>
                     <a href="{{ dictionary.get_absolute_url }}">
-                        <button type="submit">{{ dictionary.title }} <br> words: {{ dictionary.count_words }}</button>
-
+                        <button type="submit">
+                            {{ dictionary.title }}
+                            <br> words: {{ dictionary.count_words }}
+                            <br> Look Dictionary
+                        </button>
                     </a>
+
+                    <button type="button" onclick="location.href='{% url 'words:repeat_words' dictionary.slug %}'">
+                        {{ dictionary.title }}
+                        <br> words: {{ dictionary.count_words }}
+                        <br> Repeat Dictionary
+                    </button>
                 </p>
 
             {% endfor %}
