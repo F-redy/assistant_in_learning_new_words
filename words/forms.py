@@ -14,9 +14,10 @@ class AddDictionaryForm(forms.ModelForm):
 
 
 class AddPairWordForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['dictionary'].empty_label = 'No dictionary selected'
+        self.fields['dictionary'].queryset = Dictionary.objects.filter(user=user)
 
     original_word = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'placeholder': 'original word'}))
     translation_word = forms.CharField(max_length=150,
@@ -28,9 +29,10 @@ class AddPairWordForm(forms.ModelForm):
 
 
 class ImportWordsForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['dictionary'].empty_label = 'No dictionary selected'
+        self.fields['dictionary'].queryset = Dictionary.objects.filter(user=user)
 
     text = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Original 1 - Translation 1\n'
                                                                        'Original 2 - Translation 2\n'
