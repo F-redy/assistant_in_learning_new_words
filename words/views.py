@@ -50,6 +50,12 @@ class AddPairWordView(DataMixin, CreateView):
 
         return HttpResponseRedirect(reverse('words:show_dictionary', kwargs={'dict_slug': dictionary.slug}))
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+
+        return kwargs
+
 
 class ImportWordsView(DataMixin, CreateView):
     form_class = ImportWordsForm
@@ -66,35 +72,18 @@ class ImportWordsView(DataMixin, CreateView):
             sep = get_sep(form)
             db_words = PairWord.objects.filter(dictionary_id=id_dictionary)
             existing_originals = get_existing_originals(db_words)
-            words_for_db = get_unique_pairs(text, existing_originals, sep, id_dictionary, PairWord)
+            words_for_db = get_unique_pairs(text, existing_originals, sep, dictionary, PairWord)
 
             if words_for_db:
                 PairWord.objects.bulk_create(words_for_db)
 
         return HttpResponseRedirect(reverse('words:show_dictionary', kwargs={'dict_slug': dictionary.slug}))
-        # if not form.cleaned_data.get('custom_sep'):
-        #     sep = form.cleaned_data.get('sep_choice')
-        # else:
-        #     sep = form.cleaned_data.get('custom_sep')
 
-        # words = []
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
 
-        # if text:
-        #     db_words = PairWord.objects.filter(dictionary_id=id_dictionary)
-        #     existing_originals = set(db_word.original for db_word in db_words)
-
-        # for pair in text.split('\n'):
-        #     try:
-        #         original, translation = pair.split(sep)
-        #         if original not in existing_originals:
-        #             words.append(PairWord(original=original, translation=translation, dictionary=dictionary))
-        #     except ValueError:
-        #         words.append(PairWord(original=pair, translation='', dictionary=dictionary))
-
-        # if words:
-        #     PairWord.objects.bulk_create(words)
-        #
-        # return HttpResponseRedirect(reverse('words:show_dictionary', kwargs={'dict_slug': dictionary.slug}))
+        return kwargs
 
 
 class ShowAllDictionaryUserView(DataMixin, ListView):
@@ -174,7 +163,7 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
 
 
 def show_error_words(request):
-    context = {'title': 'Error Words', 'error_words': request.session['error_words']}
+    context = {'title': 'Error Words', 'error_words': request.session.get('error_words')}
     return render(request, 'words/error_words.html', context)
 
 
