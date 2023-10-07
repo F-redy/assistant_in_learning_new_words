@@ -7,17 +7,46 @@
 
 {% block content %}
 
-    <h1>Dictionary: {{ dictionary.title }}</h1>
+    <h1>{{ dictionary.title }} | total words: {{ dictionary.count_words }}</h1>
 
-    <span class="time-created">Created: {{ dictionary.created_at|date:"Y-m-d H:i" }}</span>
+    <div class="time-created">
+        <span>Created: {{ dictionary.created_at|date:"Y-m-d H:i" }}</span>
 
-    <div class="centered-image">
-        {% if dictionary.image %}
-            <img src="{{ object.image.url }}" alt="dictionary image">
-        {% else %}
-            <img src="{% static 'my_project/dictionary/img/words_header.png' %}" alt="dictionary image">
-        {% endif %}
+        <div class="centered-image">
+            {% if dictionary.image %}
+                <img src="{{ object.image.url }}" alt="dictionary image">
+            {% else %}
+                <img src="{% static 'my_project/dictionary/img/words_header.png' %}" alt="dictionary image">
+            {% endif %}
+        </div>
+
+        <span>Updated: {{ dictionary.updated_at|date:"Y-m-d H:i" }}</span>
     </div>
+
+
+    <div class="button-container">
+        <a href="{% url 'words:repeat_words' dictionary.slug %}">
+            <button type="button">Repeat Dictionary</button>
+        </a>
+
+        <a href="#">
+            <button type="button">Study Dictionary</button>
+        </a>
+
+        <a href="{% url 'words:update_dictionary' dictionary.slug %}">
+            <button type="button">Change Dictionary</button>
+        </a>
+
+        <a href="{% url 'words:add_new_words' %}">
+            <button type="button">Add New Pair</button>
+        </a>
+
+        <a href="{% url 'words:delete_dictionary' dict_slug %}">
+            <button type="button" class="delete-button">Delete Dictionary</button>
+        </a>
+    </div>
+
+
 
     <div class="words">
         <ul>
