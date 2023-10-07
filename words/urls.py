@@ -3,7 +3,7 @@ from django.urls import path
 
 from words.views import (AddDictionaryView, AddPairWordView, ImportWordsView,
                          RepeatWordsView, ShowAllDictionaryUserView,
-                         ShowDictionaryView, reset, show_error_words)
+                         ShowDictionaryView, reset, show_error_words, UpdateDictionaryView, delete_dictionary)
 
 app_name = 'words'
 
@@ -14,6 +14,8 @@ urlpatterns = [
 
     path('show-dictionaries/', ShowAllDictionaryUserView.as_view(), name='show_dictionaries'),
     path('show-dictionary/<slug:dict_slug>', ShowDictionaryView.as_view(), name='show_dictionary'),
+    path('update-dictionary/<slug:dict_slug>', UpdateDictionaryView.as_view(), name='update_dictionary'),
+    path('delete-dictionary/<slug:dict_slug>', delete_dictionary, name='delete_dictionary'),
 
     path('repeat-words/<slug:dict_slug>', RepeatWordsView.as_view(), name='repeat_words'),
 
