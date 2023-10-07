@@ -19,9 +19,13 @@ class AddPairWordForm(forms.ModelForm):
         self.fields['dictionary'].empty_label = 'No dictionary selected'
         self.fields['dictionary'].queryset = Dictionary.objects.filter(user=user)
 
-    original_word = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'placeholder': 'original word'}))
-    translation_word = forms.CharField(max_length=150,
-                                       widget=forms.TextInput(attrs={'placeholder': 'translation word'}))
+    original_word = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'placeholder': 'original word', 'class': 'input-word'}))
+
+    translation_word = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={'placeholder': 'translation word', 'class': 'input-word'}))
 
     class Meta:
         model = PairWord
@@ -68,3 +72,24 @@ class RepeatWordForm(forms.Form):
         label='Enter translation for ',
         max_length=100
     )
+
+
+class PairWordForm(forms.ModelForm):
+    original = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'word'}),
+        required=True
+    )
+
+    translation = forms.CharField(
+        widget=forms.TextInput(attrs={'class': 'word'}),
+        required=True
+    )
+
+    delete = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'delete-checkbox'})
+    )
+
+    class Meta:
+        model = PairWord
+        fields = ['original', 'translation']
