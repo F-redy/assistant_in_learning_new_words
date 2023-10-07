@@ -1,7 +1,6 @@
 <div class="menu-wrapper">
     <ul class="menu">
-        <li><a href="{% url 'home' %}">home</a></li>
-
+        <li><a href="{% url 'home' %}">Home</a></li>
 
         {% if request.user.is_authenticated %}
 
@@ -13,7 +12,7 @@
                 </ul>
             </li>
 
-            <li><a href="{% url 'words:show_dictionaries' %}"> dictionaries</a></li>
+            <li><a href="{% url 'words:show_dictionaries' %}">Dictionaries</a></li>
 
             <li class="right-align">
                 <a href="{% url 'users:profile' user.id %}">{{ user.username }}</a>
