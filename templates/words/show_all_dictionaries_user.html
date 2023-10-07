@@ -8,22 +8,17 @@
 
         <div>
             {% for dictionary in dictionary_list %}
-
-                <p>
-                    <a href="{{ dictionary.get_absolute_url }}">
-                        <button type="submit">
-                            {{ dictionary.title }}
-                            <br> words: {{ dictionary.count_words }}
-                            <br> Look Dictionary
-                        </button>
-                    </a>
-
-                    <button type="button" onclick="location.href='{% url 'words:repeat_words' dictionary.slug %}'">
-                        {{ dictionary.title }}
-                        <br> words: {{ dictionary.count_words }}
-                        <br> Repeat Dictionary
-                    </button>
-                </p>
+                {% if dictionary.count_words %}
+                    <p>
+                        <a href="{{ dictionary.get_absolute_url }}">
+                            <button type="submit">
+                                {{ dictionary.title }}
+                                <br> words: {{ dictionary.count_words }}
+                                <br> Look Dictionary
+                            </button>
+                        </a>
+                    </p>
+                {% endif %}
 
             {% endfor %}
         </div>
