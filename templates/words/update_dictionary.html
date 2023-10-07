@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load  static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ formset.management_form }}
+
+        <h1>Edit Dictionary:
+            <input type="text" class="word" name="title" value="{{ dictionary.title }}">
+        </h1>
+
+        <p class="button-along-edges">
+            <a href="{% url 'words:show_dictionary' dict_slug=dictionary.slug %}">
+                <button type="button">Back to Dictionary</button>
+            </a>
+
+            <button type="submit" class="save-button">Save Changes</button>
+        </p>
+
+        {% for form in formset %}
+            <div class="word-pair">
+                <input type="hidden" name="{{ form.prefix }}-id" value="{{ form.instance.id }}">
+                <input type="text" class="word" name="{{ form.prefix }}-original" value="{{ form.instance.original }}"
+                       required>
+                <span class="separator"> | </span>
+                <input type="text" class="word" name="{{ form.prefix }}-translation"
+                       value="{{ form.instance.translation }}" required>
+                <!-- Добавляем поле delete для каждой формы -->
+                <input type="checkbox" name="{{ form.prefix }}-delete" id="{{ form.prefix }}-delete">
+            </div>
+        {% endfor %}
+
+        <p class="button-along-edges">
+            <a href="{% url 'words:show_dictionary' dict_slug=dictionary.slug %}">
+                <button type="button">Back to Dictionary</button>
+            </a>
+
+            <button type="submit" class="save-button">Save Changes</button>
+        </p>
+
+    </form>
+
+{% endblock %}
