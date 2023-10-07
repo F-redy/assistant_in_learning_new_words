@@ -1,16 +1,18 @@
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
+from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from datetime import datetime
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from common.views import DataMixin
 
-from .forms import AddDictionaryForm, AddPairWordForm, ImportWordsForm, RepeatWordForm
+from .forms import AddDictionaryForm, AddPairWordForm, ImportWordsForm, RepeatWordForm, PairWordForm
 from .models import Dictionary, PairWord
-from .utils import get_sep, get_existing_originals, get_unique_pairs
+from .utils import get_sep, get_existing_originals, get_unique_pairs, Slug, get_delete_and_updated_words
 
 
 class AddDictionaryView(DataMixin, CreateView):
@@ -24,6 +26,7 @@ class AddDictionaryView(DataMixin, CreateView):
 
         dictionary = form.save(commit=False)
         dictionary.user = user
+
         dictionary.save()
 
         return HttpResponseRedirect(reverse('words:add_new_words'))
@@ -38,7 +41,6 @@ class AddPairWordView(DataMixin, CreateView):
         dictionary_id = form.data.get('dictionary')
         dictionary = Dictionary.objects.get(id=dictionary_id)
 
-        # Добавление слов
         original_words = form.data.getlist('original_word')
         translation_words = form.data.getlist('translation_word')
 
@@ -93,7 +95,6 @@ class ShowAllDictionaryUserView(DataMixin, ListView):
 
     def get_queryset(self):
         dictionaries = Dictionary.objects.filter(user_id=self.request.user.pk)
-
         dictionaries = dictionaries.annotate(count_words=Count('pairword'))
         return dictionaries
 
@@ -105,11 +106,72 @@ class ShowDictionaryView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        slug = self.kwargs['dict_slug']
-        context['dict_slug'] = slug
+        context['dict_slug'] = self.kwargs['dict_slug']
         context['title'] = self.object.title
         context['word_list'] = PairWord.objects.filter(dictionary=self.object).select_related('dictionary')
         return context
+
+    def get_queryset(self):
+        dictionaries = Dictionary.objects.filter(user_id=self.request.user.pk)
+        dictionaries = dictionaries.annotate(count_words=Count('pairword'))
+        return dictionaries
+
+
+class UpdateDictionaryView(UpdateView):
+    model = Dictionary
+    template_name = 'words/update_dictionary.html'
+    slug_url_kwarg = 'dict_slug'
+    context_object_name = 'dictionary'
+    fields = ['title']
+
+    def get_queryset(self):
+        return Dictionary.objects.filter(slug=self.kwargs['dict_slug'], user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        dictionary = self.object
+        words_to_change = PairWord.objects.filter(dictionary=dictionary)
+        context['title'] = dictionary.title
+        context['count_words'] = words_to_change.count()
+        PairWordFormSet = inlineformset_factory(Dictionary, PairWord, form=PairWordForm, extra=0)
+        context['formset'] = PairWordFormSet(instance=dictionary, queryset=words_to_change)
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        changed_title = self.request.POST.get('title').strip()
+        slug = Slug(changed_title).slug
+
+        dictionary = self.get_object()
+        words_to_change = PairWord.objects.filter(dictionary=dictionary)
+        PairWordFormSet = inlineformset_factory(Dictionary, PairWord, form=PairWordForm, extra=0)
+        formset = PairWordFormSet(request.POST, instance=dictionary, queryset=words_to_change)
+
+        if formset.is_valid():
+            words_to_delete, updated_words = get_delete_and_updated_words(formset, PairWord, dictionary)
+
+            if words_to_delete:
+                # Выполняем удаление слов
+                PairWord.objects.filter(id__in=words_to_delete).delete()
+
+            if updated_words:
+                # Выполняем обновление слов
+                PairWord.objects.bulk_update(updated_words, ['original', 'translation'])
+
+            if kwargs['dict_slug'] != slug:
+                dictionary.title = changed_title
+
+            dictionary.save()
+
+        return redirect('words:update_dictionary', dict_slug=slug)
+
+
+def delete_dictionary(request, dict_slug):
+    dictionary = get_object_or_404(Dictionary, slug=dict_slug, user=request.user)
+    if dictionary:
+        dictionary.delete()
+
+        return redirect('words:show_dictionaries')
 
 
 class RepeatWordsView(SuccessMessageMixin, DetailView):
@@ -130,7 +192,8 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
 
             title = ' '.join(self.kwargs["dict_slug"].split('-')).title()
             form = RepeatWordForm()
-            context = {'translation': translation, 'title': f'Repeat {title}', 'form': form}
+            context = {'translation': translation, 'title': f'Repeat {title}', 'form': form,
+                       'slug': self.kwargs['dict_slug']}
 
             return render(request, 'words/repeat_words.html', context)
         else:
@@ -143,7 +206,6 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
     def get(self, request, *args, **kwargs):
         request.session['current_word_index'] = 0
         request.session['error_words'] = []
-        messages.success(request, 'Go Go Go')
         return self._process_word(request, **kwargs)
 
     def post(self, request, *args, **kwargs):
