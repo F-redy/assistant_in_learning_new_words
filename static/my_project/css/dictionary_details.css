@@ -1,17 +1,16 @@
 .time-created {
     display: flex;
-    justify-content: center;
+    justify-content: space-evenly;
+    align-items: center; /* Выравнивание по центру по вертикали */
     font-family: filmotype-lacrosse, sans-serif;
     font-style: normal;
     font-weight: 400;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .centered-image {
     display: flex;
-    flex-direction: column; /* Размещаем текст и изображение вертикально */
-    align-items: center; /* Выравнивание по центру по вертикали */
-    width: 100%; /* 100% ширины родительского контейнера */
+    align-items: center; /* Выравнивание изображения и дат по центру по вертикали */
 }
 
 .centered-image img {
@@ -27,8 +26,6 @@
 img:hover {
     transform: scale(1.1);
 }
-
-
 
 .words ul {
     list-style-type: none;
@@ -49,11 +46,13 @@ img:hover {
 /* Стили для слова */
 .word {
     flex: 1; /* Равномерное распределение пространства внутри контейнера */
-    font-style: italic; /* Курсив  */
+    font-style: oblique; /* Курсив  */
     font-size: 20px;
     color: #fafafa; /* Цвет текста  */
+    background-color: #1d2b5b;
     border-bottom: 2px solid rgba(232, 204, 51, 0.76); /* Линия под текстом */
     padding: 5px; /* Внутренние отступы */
+
 }
 
 /* Стили для разделителя " - " */
@@ -64,3 +63,39 @@ img:hover {
 }
 
 
+.button-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.button-along-edges {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.delete-button {
+    background-color: #d00505;
+
+}
+
+.save-button {
+    background-color: green;
+}
+
+.remove-word-button {
+    display: flex;
+    justify-content: flex-end;
+    background-color: #d00505;
+    margin-left: auto; /* Помещаем кнопку в правый край */
+}
+
+.input-word {
+    width: 95%;
+    background-color: #ffffff;
+    color: #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
