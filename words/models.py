@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-
+from datetime import datetime
 from users.models import CustomUser
 
 from words.utils import Slug
@@ -10,8 +10,8 @@ class Dictionary(models.Model):
     title = models.CharField('Название словаря', max_length=75)
     image = models.ImageField('Картинка', upload_to='dictionaries_images', null=True)
     slug = models.SlugField(max_length=80)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField()
+    updated_at = models.DateTimeField()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     class Meta:
@@ -27,8 +27,12 @@ class Dictionary(models.Model):
         return reverse('words:show_dictionary', kwargs={'dict_slug': self.slug})
 
     def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = Slug(self.title).slug
+        if not self.created_at:
+            self.created_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        self.slug = Slug(self.title).slug
+        self.updated_at = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
         super().save(*args, **kwargs)
 
 
@@ -42,4 +46,3 @@ class PairWord(models.Model):
 
     def __str__(self):
         return f"{self.original} - {self.translation}"
-
