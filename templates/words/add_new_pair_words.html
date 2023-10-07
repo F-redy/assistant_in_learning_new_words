@@ -1,4 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+{% endblock %}
+
 
 {% block content %}
 
@@ -14,11 +20,14 @@
 
             <div><p>{{ form.dictionary }}</p></div>
 
-            <div id="word-fields">
+            <div class="words" id="word-fields">
                 <!-- Первая пара полей -->
-                <p>
-                    {{ form.original_word }} {{ form.translation_word }}
-                </p>
+                <div class="word-pair">
+                    <span class="word">{{ form.original_word }}</span>
+                    <span class="separator"> | </span>
+                    <span class="word">{{ form.translation_word }}</span>
+                </div>
+
             </div>
 
             <p>
@@ -42,10 +51,14 @@
                     // Проверяем, что последние поля не пустые
                     if (originalWord.val() !== "" && translationWord.val() !== "") {
                         var newWordField = `
-                            <p>
-                                {{ form.original_word }} {{ form.translation_word }}
-                                <button type="submit" class="remove-word-button">Remove</button>
-                            </p>
+                        <div>
+                            <div class="word-pair">
+                                <span class="word">{{ form.original_word }}</span>
+                                <span class="separator"> | </span>
+                                <span class="word">{{ form.translation_word }}</span>
+                            </div>
+                            <button type="submit" class="remove-word-button">Remove</button>
+                        </div>
                         `;
                         $("#word-fields").append(newWordField);
 
