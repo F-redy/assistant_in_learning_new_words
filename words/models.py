@@ -1,8 +1,9 @@
+from datetime import datetime
+
 from django.db import models
 from django.urls import reverse
-from datetime import datetime
-from users.models import CustomUser
 
+from users.models import CustomUser
 from words.utils import Slug
 
 
