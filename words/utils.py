@@ -1,5 +1,9 @@
 import re
 
+from django.contrib import messages
+from django.shortcuts import redirect, render
+from django.urls import reverse
+
 cyrillic_to_latin = {
     'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y',
     'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f',
@@ -72,3 +76,155 @@ def get_delete_and_updated_words(formset, PairWord, dictionary):
             updated_words.append(updated_word)
 
     return words_to_delete, updated_words
+
+
+# Функции для представления StudyWordsView
+def get_data_session(request, **kwargs):
+    """
+    Получает данные из сессии на основе переданных ключей.
+
+    Args:
+        request (HttpRequest): Запрос от клиента.
+        **kwargs (dict): Словарь, содержащий ключи и значения по умолчанию для данных,
+                      которые нужно получить из сессии.
+
+    Returns:
+        dict: Словарь, содержащий данные из сессии на основе переданных ключей.
+              Если данные отсутствуют в сессии, используются значения по умолчанию из kwargs.
+
+    Example:
+        data = get_data_session(request,
+                {'start_index': None, 'end_index': None, 'level': None, 'current_word_index': None, 'study_words': []})
+        start_index = data['start_index']
+        end_index = data['end_index']
+        level = data['level']
+        current_word_index = data['current_word_index']
+        study_words = data['study_words']
+    """
+    data_session = {}
+    for key, value in kwargs.items():
+        data_session[key] = request.session.get(key, value)
+
+    return data_session
+
+
+def set_data_session(request, **kwargs):
+    """
+    Устанавливает значения в сессию на основе переданных ключей и их значений.
+
+    Args:
+        request (HttpRequest): Запрос от клиента.
+        **kwargs: Пары ключ-значение для установки в сессию.
+
+    Example:
+        set_data_session(request, start_index=0, end_index=5, level=1, current_word_index=0, study_words=[])
+    """
+    for key, value in kwargs.items():
+        request.session[key] = value
+
+
+def study_process(request, **kwargs):
+    """
+    Обрабатывает процесс обучения пользователя словам из словаря.
+
+    Args:
+        request (HttpRequest): Запрос от клиента.
+        **kwargs: Дополнительные параметры и объекты, необходимые для выполнения функции.
+
+            Следующие константы и объекты должны быть переданы в kwargs:
+
+            - STOP_LEARNING (int): Уровень, на котором обучение завершается.
+            - NEXT_LEVEL_POINT (int): Количество баллов для перехода на следующий уровень.
+            - START_INDEX: Индекс начала текущего среза слов. (Значение по умолчанию)
+            - END_INDEX: Индекс конца текущего среза слов. (Значение по умолчанию)
+            - STEP_INDEX (int): Шаг для увелечения end_index. (Значение по умолчанию)
+            - POINT (int): Начальное количество балов. (Значение по умолчанию)
+            - template_name (str): Имя шаблона, используемого для отображения страницы.
+            - dict_slug (str): Слаг словаря, с которым работает пользователь.
+
+            Дополнительные модели:
+
+            - PairWord (model): Модель для работы с парами слов.
+            - RepeatWordForm (form): Форма для ответа пользователя на слово.
+
+            Следующие аргументы могут быть извлечены из данных сессии:
+
+            - start_index (int): Индекс начала текущего среза слов.
+            - end_index (int): Индекс конца текущего среза слов.
+            - level (int): Текущий уровень обучения.
+            - current_word_index (int): Индекс текущего изучаемого слова.
+            - study_words (list): Список изучаемых слов с баллами.
+
+    Returns:
+        HttpResponse: HTTP-ответ с результатом обработки запроса.
+
+    """
+
+    data = get_data_session(request,
+                            **{'start_index': kwargs['START_INDEX'],
+                               'end_index': kwargs['END_INDEX'],
+                               'level': 1,
+                               'current_word_index': 0,
+                               'study_words': []
+                               })
+
+    start_index = data.get('start_index', 1)
+    end_index = data['end_index']
+    level = request.session.get('level', 1)
+    current_word_index = data['current_word_index']
+    study_words = data['study_words']
+
+    if level < kwargs['STOP_LEARNING']:
+        if study_words:
+            # проверяем количество балов у пар
+            study_words = [{'pair': word['pair'], 'point': word['point']}
+                           for word in study_words if word['point'] < kwargs['NEXT_LEVEL_POINT']]
+
+        if not study_words:
+            db_words = kwargs['PairWord'].objects.filter(dictionary__slug=kwargs['dict_slug']).order_by('id')
+            # length_lst = abs(len(db_words) - end_index) if len(db_words) > 5 else len(db_words)
+            # message = f'{length_lst} word{("", "s")[length_lst > 1]} left out of {len(db_words)}'
+            # messages.info(request, message)
+
+            if start_index > len(db_words):
+                # если список слов закончился
+                level += 1
+                start_index, end_index = 0, 5
+
+            study_words = [{'pair': (pair.original, pair.translation), 'point': 0}
+                           for pair in db_words[start_index:end_index]]
+            set_data_session(request, level=level, start_index=end_index,
+                             end_index=end_index + kwargs['STEP_INDEX'])
+
+        if current_word_index + 1 > len(study_words):
+            current_word_index = 0
+
+        set_data_session(request, study_words=study_words, current_word_index=current_word_index)
+
+        title = ' '.join(kwargs["dict_slug"].split('-')).title()
+        form = kwargs['RepeatWordForm']()
+        reset_url = reverse('words:study_words', kwargs={'dict_slug': kwargs["dict_slug"]})
+
+        context = {'translation': study_words[current_word_index]['pair'][1],
+                   'title': f'Study {title}',
+                   'form': form,
+                   'slug': kwargs['dict_slug'],
+                   'reset_url': reset_url,
+                   'words_left': request.session.get('words_left')
+                   }
+
+        return render(request, kwargs['template_name'], context)
+    else:
+        data_reset = {
+            'level': kwargs['LEVEL'],
+            'original': None,
+            'translation': None,
+            'study_words': None,
+            'start_index': kwargs['START_INDEX'],
+            'end_index': kwargs['END_INDEX'],
+            'step': kwargs['STEP_INDEX'],
+            'point': kwargs['POINT'],
+            'current_word_index': kwargs['CURRENT_WORD_INDEX']
+        }
+        set_data_session(request, **data_reset)
+    return redirect(reverse('words:repeat_words', kwargs={'slug': kwargs['dict_slug']}))
