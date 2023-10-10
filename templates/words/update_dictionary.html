@@ -11,6 +11,14 @@
         {% csrf_token %}
         {{ formset.management_form }}
 
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == 'success' %}
+                    <h3 class="success-message text-center"> {{ message }}</h3>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
         <h1>Edit Dictionary:
             <input type="text" class="word" name="title" value="{{ dictionary.title }}">
         </h1>
@@ -20,7 +28,7 @@
                 <button type="button">Back to Dictionary</button>
             </a>
 
-            <button type="submit" class="save-button">Save Changes</button>
+            <button type="submit" class="green-button">Save Changes</button>
         </p>
 
         {% for form in formset %}
@@ -41,7 +49,7 @@
                 <button type="button">Back to Dictionary</button>
             </a>
 
-            <button type="submit" class="save-button">Save Changes</button>
+            <button type="submit" class="green-button">Save Changes</button>
         </p>
 
     </form>
