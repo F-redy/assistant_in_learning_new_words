@@ -69,7 +69,7 @@ class RepeatWordForm(forms.Form):
                 'autofocus': True,
                 'placeholder': 'Enter your answer...',
             }),
-        label='Enter translation for ',
+        label='your answer',
         max_length=100
     )
 
