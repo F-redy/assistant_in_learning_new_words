@@ -1,25 +1,72 @@
+{#{% extends 'base.html' %}#}
+{##}
+{#{% block content %}#}
+{##}
+{#    {% if dictionary_list %}#}
+{##}
+{#        <h1> Your Dictionaries </h1>#}
+{##}
+{#        <div>#}
+{#            {% for dictionary in dictionary_list %}#}
+{#                {% if dictionary.count_words %}#}
+{#                    <p>#}
+{#                        <a href="{{ dictionary.get_absolute_url }}">#}
+{#                            <button type="submit">#}
+{#                                {{ dictionary.title }}#}
+{#                                <br> words: {{ dictionary.count_words }}#}
+{#                                <br> Look Dictionary#}
+{#                            </button>#}
+{#                        </a>#}
+{#                    </p>#}
+{#                {% endif %}#}
+{##}
+{#            {% endfor %}#}
+{#        </div>#}
+{##}
+{#    {% else %}#}
+{##}
+{#        <h1>You don't have dictionaries yet</h1>#}
+{##}
+{#        <a href="{% url 'words:add_dictionary' %}">#}
+{#            <button type="button">Create Dictionary</button>#}
+{#        </a>#}
+{##}
+{#    {% endif %}#}
+{##}
+{#{% endblock %}#}
 {% extends 'base.html' %}
+{% load  static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+{% endblock %}
 
 {% block content %}
 
     {% if dictionary_list %}
 
-        <h1> Your Dictionaries </h1>
+        <h1>Your Dictionaries</h1>
 
-        <div>
+        <div class="card-group">
             {% for dictionary in dictionary_list %}
                 {% if dictionary.count_words %}
-                    <p>
-                        <a href="{{ dictionary.get_absolute_url }}">
-                            <button type="submit">
-                                {{ dictionary.title }}
-                                <br> words: {{ dictionary.count_words }}
-                                <br> Look Dictionary
-                            </button>
-                        </a>
-                    </p>
+                    <div class="card">
+                        <div class="card-top">
+                            <small class="text-left text-body-secondary">Created: {{ dictionary.created_at }} </small>
+                            <small class="text-right text-body-secondary">Last
+                                updated: {{ dictionary.updated_at }}</small>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ dictionary.title }}</h5>
+                            <div class="ml-auto">
+                                <a href="{{ dictionary.get_absolute_url }}" class="btn btn-primary">
+                                    <button type="button">Show Dictionary</button>
+                                </a>
+                            </div>
+                            <p class="card-text-bottom">Words: {{ dictionary.count_words }}</p>
+                        </div>
+                    </div>
                 {% endif %}
-
             {% endfor %}
         </div>
 
@@ -27,9 +74,7 @@
 
         <h1>You don't have dictionaries yet</h1>
 
-        <a href="{% url 'words:add_dictionary' %}">
-            <button type="button">Create Dictionary</button>
-        </a>
+        <a href="{% url 'words:add_dictionary' %}" class="btn btn-success">Create Dictionary</a>
 
     {% endif %}
 
