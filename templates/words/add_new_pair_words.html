@@ -30,10 +30,10 @@
 
             </div>
 
-            <p>
+            <div class="button-container">
                 <button type="submit" id="add-word-button">Add more words</button>
-                <button type="submit">Save Dictionary</button>
-            </p>
+                <button type="submit" class="green-button right-button">Save Dictionary</button>
+            </div>
 
         </form>
     </div>
@@ -57,7 +57,7 @@
                                 <span class="separator"> | </span>
                                 <span class="word">{{ form.translation_word }}</span>
                             </div>
-                            <button type="submit" class="remove-word-button">Remove</button>
+                            <button type="submit" class="remove-word-button red-button right-button">Remove</button>
                         </div>
                         `;
                         $("#word-fields").append(newWordField);
