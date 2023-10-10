@@ -42,10 +42,80 @@ button {
     cursor: pointer;
 }
 
-.error_message {
+.red-button {
+    background-color: #d00505;
+}
+
+.green-button {
+    background-color: green;
+}
+
+.right-button {
+    display: flex;
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between; /* Распределить кнопки по краям контейнера */
+    align-items: center; /* Выравнивание по вертикали по центру */
+}
+
+.button-inline {
+    display: inline-block;
+
+}
+
+.button-center {
+    display: flex;
+    justify-content: space-evenly;
+
+}
+
+.error-message {
     color: red;
 }
 
-.success_message {
+.success-message {
     color: #03d738;
+}
+
+.info-message {
+    color: #4ac1f7;
+}
+
+.success-answer {
+    background-color: #217e3b;
+    color: #faf7f7;
+    font-size: 18px;
+    width: 300px;
+}
+
+.error-answer {
+    background-color: #7e0404;
+    color: #faf7f7;
+    font-size: 18px;
+    width: 300px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.label-box {
+    font-size: 18px;
+}
+
+.content-box {
+    display: flex;
+    justify-content: center;
+}
+
+.sticky-box {
+    position: sticky;
+    top: 0;
+    background-color: rgba(18, 27, 65, 0.15);
+    padding: 10px; /* Отступ для улучшения внешнего вида */
 }
