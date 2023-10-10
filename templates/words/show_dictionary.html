@@ -29,7 +29,7 @@
             <button type="button">Repeat Dictionary</button>
         </a>
 
-        <a href="#">
+        <a href="{% url 'words:study_words' dictionary.slug %}">
             <button type="button">Study Dictionary</button>
         </a>
 
@@ -42,11 +42,9 @@
         </a>
 
         <a href="{% url 'words:delete_dictionary' dict_slug %}">
-            <button type="button" class="delete-button">Delete Dictionary</button>
+            <button type="button" class="red-button">Delete Dictionary</button>
         </a>
     </div>
-
-
 
     <div class="words">
         <ul>
