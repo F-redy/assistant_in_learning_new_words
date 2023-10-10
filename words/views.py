@@ -3,18 +3,17 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from common.views import DataMixin
 
-from .forms import AddDictionaryForm, AddPairWordForm, ImportWordsForm, RepeatWordForm, PairWordForm
+from .forms import (AddDictionaryForm, AddPairWordForm, ImportWordsForm,
+                    PairWordForm, RepeatWordForm)
 from .models import Dictionary, PairWord
-from .utils import get_sep, get_existing_originals, get_unique_pairs, Slug, get_delete_and_updated_words, study_process, \
-    set_data_session
-
-from random import randint
+from .utils import (Slug, get_delete_and_updated_words, get_existing_originals,
+                    get_sep, get_unique_pairs, set_data_session, study_process)
 
 
 class AddDictionaryView(DataMixin, CreateView):
