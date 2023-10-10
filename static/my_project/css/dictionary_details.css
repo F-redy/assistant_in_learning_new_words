@@ -46,7 +46,6 @@ img:hover {
 /* Стили для слова */
 .word {
     flex: 1; /* Равномерное распределение пространства внутри контейнера */
-    font-style: oblique; /* Курсив  */
     font-size: 20px;
     color: #fafafa; /* Цвет текста  */
     background-color: #1d2b5b;
@@ -71,24 +70,8 @@ img:hover {
 .button-along-edges {
     display: flex;
     justify-content: space-between;
-
 }
 
-.delete-button {
-    background-color: #d00505;
-
-}
-
-.save-button {
-    background-color: green;
-}
-
-.remove-word-button {
-    display: flex;
-    justify-content: flex-end;
-    background-color: #d00505;
-    margin-left: auto; /* Помещаем кнопку в правый край */
-}
 
 .input-word {
     width: 95%;
@@ -98,4 +81,72 @@ img:hover {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+
+/* Стили для карточек  */
+.card {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 20px;
+    padding: 10px 20px 20px 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: rgba(6, 28, 72, 0.69);
+    height: 170px;
+}
+
+.card-top {
+    display: flex;
+    justify-content: space-between; /* Равномерное распределение между элементами */
+    background-color: rgba(4, 57, 79, 0.7);
+    padding: 10px;
+}
+
+.text-left {
+    flex: 1; /* Равномерное распределение доступного пространства между элементами */
+    text-align: left;
+}
+
+.text-right {
+    flex: 1; /* Равномерное распределение доступного пространства между элементами */
+    text-align: right;
+    width: max-content;
+}
+
+.text-body-secondary {
+    font-size: 16px;
+    color: #dde4e7;
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.card-text {
+    font-size: 16px;
+}
+
+.btn-primary {
+    background-color: rgba(0, 123, 255, 0.73);
+    color: #fff;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.ml-auto {
+    float: right;
+}
+
+.card-text-bottom {
+    /*position: absolute;*/
+    width: max-content;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: rgba(4, 57, 79, 0.7);
+    padding: 10px;
+
 }
