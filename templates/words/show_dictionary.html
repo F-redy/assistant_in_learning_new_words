@@ -51,6 +51,7 @@
             {% for pair in word_list %}
                 <li>
                     <div class="word-pair">
+                        <span class="number"> {{ forloop.counter }}</span>
                         <span class="word">{{ pair.original }}</span>
                         <span class="separator"> | </span>
                         <span class="word">{{ pair.translation }}</span>
