@@ -16,14 +16,19 @@ from .utils import (Slug, get_delete_and_updated_words, get_existing_originals,
                     get_sep, get_unique_pairs, set_data_session, study_process)
 
 
-class AddDictionaryView(DataMixin, CreateView):
+class AddDictionaryView(DataMixin, SuccessMessageMixin, CreateView):
     form_class = AddDictionaryForm
     template_name = 'words/add_dictionary.html'
-    success_url = reverse_lazy('words:add_new_words')
     title = "New Dictionary"
 
     def form_valid(self, form):
         user = self.request.user
+
+        slug = Slug(form.cleaned_data['title']).slug
+        existing_dictionary = Dictionary.objects.filter(user=user, slug=slug).first()
+        if existing_dictionary:
+            messages.error(self.request, 'Dictionary with this name already exists.')
+            return redirect(reverse('words:add_dictionary'))
 
         dictionary = form.save(commit=False)
         dictionary.user = user
@@ -111,7 +116,8 @@ class ShowDictionaryView(DetailView):
         context = super().get_context_data(**kwargs)
         context['dict_slug'] = self.kwargs['dict_slug']
         context['title'] = self.object.title
-        context['word_list'] = PairWord.objects.filter(dictionary=self.object).select_related('dictionary')
+        context['word_list'] = PairWord.objects.filter(dictionary=self.object) \
+            .select_related('dictionary').order_by('-id')
         return context
 
     def get_queryset(self):
@@ -133,7 +139,7 @@ class UpdateDictionaryView(SuccessMessageMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         dictionary = self.object
-        words_to_change = PairWord.objects.filter(dictionary=dictionary)
+        words_to_change = PairWord.objects.filter(dictionary=dictionary).order_by('-id')
         context['title'] = dictionary.title
         context['count_words'] = words_to_change.count()
         PairWordFormSet = inlineformset_factory(Dictionary, PairWord, form=PairWordForm, extra=0)
