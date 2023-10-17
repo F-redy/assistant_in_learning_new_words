@@ -227,4 +227,4 @@ def study_process(request, **kwargs):
             'current_word_index': kwargs['CURRENT_WORD_INDEX']
         }
         set_data_session(request, **data_reset)
-    return redirect(reverse('words:repeat_words', kwargs={'slug': kwargs['dict_slug']}))
+    return redirect(reverse('words:repeat_words', kwargs={'dict_slug': kwargs['dict_slug']}))
