@@ -257,6 +257,7 @@ class StudyWordsView(SuccessMessageMixin, DetailView):
         return {'LEVEL': self.LEVEL,
                 'STOP_LEARNING': self.STOP_LEARNING,
                 'NEXT_LEVEL_POINT': self.NEXT_LEVEL_POINT,
+                'CURRENT_WORD_INDEX': self.CURRENT_WORD_INDEX,
                 'START_INDEX': self.START_INDEX,
                 'END_INDEX': self.END_INDEX,
                 'STEP_INDEX': self.STEP_INDEX,
