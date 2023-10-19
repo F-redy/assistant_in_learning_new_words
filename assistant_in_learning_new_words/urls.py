@@ -22,7 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('__debug__/', include("debug_toolbar.urls")),
 
-    path('', lambda request: render(request, 'home.html', {"title": "Home"}), name="home"),
     path('users/', include("users.urls", namespace="users")),
-    path('words/', include("words.urls", namespace="words")),
+    path('', include("words.urls", namespace="words")),
 ]
