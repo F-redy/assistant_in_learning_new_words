@@ -99,7 +99,7 @@ class ImportWordsView(DataMixin, CreateView):
 class ShowAllDictionaryUserView(DataMixin, ListView):
     model = Dictionary
     template_name = 'words/show_all_dictionaries_user.html'
-    title = 'All Your Dictionaries'
+    title = 'Home'
 
     def get_queryset(self):
         dictionaries = Dictionary.objects.filter(user_id=self.request.user.pk).order_by('-updated_at')
