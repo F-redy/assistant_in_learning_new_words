@@ -14,7 +14,7 @@ urlpatterns = [
     path('add-new-words/', login_required(AddPairWordView.as_view()), name='add_new_words'),
     path('import-new-words/', login_required(ImportWordsView.as_view()), name='import_new_words'),
 
-    path('show-dictionaries/', ShowAllDictionaryUserView.as_view(), name='show_dictionaries'),
+    path('', ShowAllDictionaryUserView.as_view(), name='show_dictionaries'),
     path('show-dictionary/<slug:dict_slug>', ShowDictionaryView.as_view(), name='show_dictionary'),
     path('update-dictionary/<slug:dict_slug>', UpdateDictionaryView.as_view(), name='update_dictionary'),
     path('delete-dictionary/<slug:dict_slug>', delete_dictionary, name='delete_dictionary'),
