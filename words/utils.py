@@ -43,11 +43,11 @@ def get_unique_pairs(text: str, existing_originals: set[str], sep, dictionary, P
     unique_pairs = []
     for pair in text.split('\n'):
         try:
-            original, translation = pair.split(sep)
+            original, translation = pair.lower().strip().split(sep)
             if original not in existing_originals:
                 unique_pairs.append(PairWord(original=original, translation=translation, dictionary=dictionary))
         except ValueError:
-            unique_pairs.append(PairWord(original=pair, translation='', dictionary=dictionary))
+            unique_pairs.append(PairWord(original=pair.lower().strip(), translation='', dictionary=dictionary))
     return unique_pairs
 
 
