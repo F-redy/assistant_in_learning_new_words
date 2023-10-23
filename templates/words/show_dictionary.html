@@ -3,6 +3,8 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'my_project/css/dictionary_details.css' %}">
+    <link rel="stylesheet" href="{% static 'my_project/css/words_cards.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 
 {% block content %}
@@ -23,6 +25,9 @@
         <span>Updated: {{ dictionary.updated_at|date:"Y-m-d H:i" }}</span>
     </div>
 
+        <div>
+            {% include 'inc/words_cards.html' %}
+        </div>
 
     <div class="button-container">
         <a href="{% url 'words:repeat_words' dictionary.slug %}">
