@@ -1,86 +1,76 @@
-{% load static %}
-
-{% block css %}
-    <link rel="stylesheet" href="{% static 'my_project/css/words_cards.css' %}">
-{% endblock %}
-
-{% block content %}
-    <div class="container">
-        <div class="card center" id="card">
-            <div class="front">
-                <div class="original center">
-                    <h1>{{ word.original }}</h1>
-                </div>
+<div class="container">
+    <div class="card " id="card">
+        <div class="front">
+            <div class="original center">
+                <h1>{{ word.original }}</h1>
             </div>
-            <div class="back">
-                <div class="translation center">
-                    <h1>{{ word.translation }}</h1>
-                </div>
-            </div>
-
         </div>
-
-        <div class="buttons">
-            <button id="prevBtn">Previous</button>
-            <button id="nextBtn">Next</button>
+        <div class="back">
+            <div class="translation center">
+                <h1>{{ word.translation }}</h1>
+            </div>
         </div>
     </div>
 
-    <script>
-        const card = document.getElementById('card');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const wordList = {{ word_data|safe }};
-        let currentIndex = 0;
-        let isFlipped = false;
+    <div class="buttons-card">
+        <button id="prevBtn" class="button-previous">Previous</button>
+        <button id="nextBtn" class="button-next">Next</button>
+    </div>
+</div>
 
-        function showCard(index) {
-            const word = wordList[index];
-            document.querySelector('.original h1').textContent = word.original;
-            document.querySelector('.translation h1').textContent = word.translation;
-            isFlipped = false;
-            card.classList.remove('is-flipped');
+<script>
+    const card = document.getElementById('card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const wordList = {{ word_data|safe }};
+    let currentIndex = 0;
+    let isFlipped = false;
 
-            // Проверка, можно ли нажать кнопку "Previous" и "Next"
-            if (currentIndex === 0) {
-                prevBtn.classList.add('button-disabled');
-            } else {
-                prevBtn.classList.remove('button-disabled');
-            }
-            if (currentIndex === wordList.length - 1) {
-                nextBtn.classList.add('button-disabled');
-            } else {
-                nextBtn.classList.remove('button-disabled');
-            }
+    function showCard(index) {
+        const word = wordList[index];
+        document.querySelector('.original h1').textContent = word.original;
+        document.querySelector('.translation h1').textContent = word.translation;
+        isFlipped = false;
+        card.classList.remove('is-flipped');
+
+        // Проверка, можно ли нажать кнопку "Previous" и "Next"
+        if (currentIndex === 0) {
+            prevBtn.classList.add('button-disabled');
+        } else {
+            prevBtn.classList.remove('button-disabled');
         }
+        if (currentIndex === wordList.length - 1) {
+            nextBtn.classList.add('button-disabled');
+        } else {
+            nextBtn.classList.remove('button-disabled');
+        }
+    }
 
-        prevBtn.addEventListener('click', function () {
-            if (currentIndex > 0) {
-                currentIndex--;
-                showCard(currentIndex);
-            }
-        });
+    prevBtn.addEventListener('click', function () {
+        if (currentIndex > 0) {
+            currentIndex--;
+            showCard(currentIndex);
+        }
+    });
 
-        nextBtn.addEventListener('click', function () {
-            if (currentIndex < wordList.length - 1) {
-                currentIndex++;
-                showCard(currentIndex);
-            }
-        });
+    nextBtn.addEventListener('click', function () {
+        if (currentIndex < wordList.length - 1) {
+            currentIndex++;
+            showCard(currentIndex);
+        }
+    });
 
-        showCard(currentIndex);
+    showCard(currentIndex);
 
-        card.addEventListener('click', function () {
-            if (isFlipped) {
-                document.querySelector('.original h1').textContent = wordList[currentIndex].original;
-            } else {
-                document.querySelector('.translation h1').textContent = wordList[currentIndex].translation;
-            }
-            isFlipped = !isFlipped;
-            card.classList.toggle('is-flipped');
-        });
-    </script>
-    {#    <div id="wordData" data-word_data="{{ word_data|escapejs|safe }}"></div>#}
-    {#    <script src="{% static 'my_project/js/words_cards.js' %}"></script>#}
-
-{% endblock %}
+    card.addEventListener('click', function () {
+        if (isFlipped) {
+            document.querySelector('.original h1').textContent = wordList[currentIndex].original;
+        } else {
+            document.querySelector('.translation h1').textContent = wordList[currentIndex].translation;
+        }
+        isFlipped = !isFlipped;
+        card.classList.toggle('is-flipped');
+    });
+</script>
+{#    <div id="wordData" data-word_data="{{ word_data|escapejs|safe }}"></div>#}
+{#    <script src="{% static 'my_project/js/words_cards.js' %}"></script>#}
