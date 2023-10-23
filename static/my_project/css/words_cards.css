@@ -1,9 +1,3 @@
-* {
-    font-family: Roboto, sans-serif;
-    color: #fff;
-}
-
-
 .center {
     position: absolute;
     top: 50%;
@@ -12,33 +6,74 @@
     transform: translate(-50%, -50%);
 }
 
-/*.container {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
-/*    align-items: center;*/
-/*}*/
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.buttons-card {
+    display: flex;
+    justify-content: space-between;
+    z-index: 1;
+}
 
 
-.buttons {
-    position: absolute;
-    top: 70%;
-    left: 45%;
+.button-previous,
+.button-next {
+    margin: 0 30px;
+    flex: 1;
+    border-radius: 50%;
+    width: 70px;
+    height: 50px;
+    font-size: 24px;
+    background-color: #3c5a73;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
 
+.button-previous:hover,
+.button-next:hover {
+    background-color: rgba(36, 86, 142, 0.54);
 }
 
 .button-disabled {
-    background-color: gray;
+    background-color: rgba(133, 133, 133, 0.65);
+    pointer-events: none;
+    cursor: not-allowed;
+    color: rgba(197, 185, 185, 0.57);
+}
+
+.button-previous:disabled,
+.button-next:disabled {
     pointer-events: none;
     cursor: not-allowed;
 }
 
+.count-words {
+    font-size: 18px;
+    color: rgba(175, 175, 175, 0.77);
+    margin: 0 20px;
+    padding-top: 10px;
+}
+
 .card {
     cursor: pointer;
-    width: 50%;
+    position: relative;
+    width: 70%;
     height: 320px;
     background-color: #3c5a73;
-    overflow: hidden; /* Добавьте это свойство */
+    overflow: hidden;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: none;
+}
+
+.card:hover {
+    background-color: rgba(36, 86, 142, 0.54);
 }
 
 .back,
