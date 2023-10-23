@@ -1,5 +1,5 @@
 <div class="container">
-    <div class="card " id="card">
+    <div class="card" id="card">
         <div class="front">
             <div class="original center">
                 <h1>{{ word.original }}</h1>
@@ -13,8 +13,13 @@
     </div>
 
     <div class="buttons-card">
-        <button id="prevBtn" class="button-previous">Previous</button>
-        <button id="nextBtn" class="button-next">Next</button>
+        <button id="prevBtn" class="button-previous">
+            <i class="fa fa-arrow-left"></i>
+        </button>
+        <div id="wordCount" class="count-words">0/0</div>
+        <button id="nextBtn" class="button-next">
+            <i class="fa fa-arrow-right"></i>
+        </button>
     </div>
 </div>
 
@@ -23,6 +28,8 @@
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
     const wordList = {{ word_data|safe }};
+    const wordCountElement = document.getElementById('wordCount');
+    const totalWords = wordList.length; // Общее количество слов
     let currentIndex = 0;
     let isFlipped = false;
 
@@ -32,6 +39,9 @@
         document.querySelector('.translation h1').textContent = word.translation;
         isFlipped = false;
         card.classList.remove('is-flipped');
+
+        const currentIndexDisplay = index + 1;
+        wordCountElement.textContent = `${currentIndexDisplay}/${totalWords}`;
 
         // Проверка, можно ли нажать кнопку "Previous" и "Next"
         if (currentIndex === 0) {
