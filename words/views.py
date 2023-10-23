@@ -52,6 +52,7 @@ class AddPairWordView(DataMixin, CreateView):
 
         pair_objects = []
         for original, translation in zip(original_words, translation_words):
+            original, translation = original.strip().lower(), translation.strip().lower()
             pair_objects.append(PairWord(original=original, translation=translation, dictionary=dictionary))
 
         PairWord.objects.bulk_create(pair_objects)
@@ -116,8 +117,10 @@ class ShowDictionaryView(DetailView):
         context = super().get_context_data(**kwargs)
         context['dict_slug'] = self.kwargs['dict_slug']
         context['title'] = self.object.title
-        context['word_list'] = PairWord.objects.filter(dictionary=self.object) \
-            .select_related('dictionary').order_by('-id')
+        word_list = PairWord.objects.filter(dictionary=self.object).select_related('dictionary').order_by('-id')
+
+        context['word_list'] = word_list
+        context['word_data'] = [{'original': word.original, 'translation': word.translation} for word in word_list]
         return context
 
     def get_queryset(self):
