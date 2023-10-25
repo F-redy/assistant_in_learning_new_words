@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
@@ -272,6 +274,22 @@ class StudyWordsView(SuccessMessageMixin, DetailView):
                 }
 
     def get(self, request, *args, **kwargs):
+
+        active_session = request.session.get('active_session')
+
+        if (active_session is not None or active_session is None) and active_session != kwargs[self.slug_url_kwarg]:
+            request.session['list_words'] = None
+            request.session['active_session'] = None
+
+        list_words = request.session.get('list_words')
+
+        if list_words is None:
+            bd_words = PairWord.objects.filter(dictionary__slug=kwargs[self.slug_url_kwarg])
+            words = [{'pair': (pair.original, pair.translation), 'point': 0} for pair in bd_words]
+            shuffle(words)
+            request.session['list_words'] = words
+            request.session['active_session'] = kwargs[self.slug_url_kwarg]
+
         set_data_session(request, study_words=[],
                          start_index=self.START_INDEX,
                          end_index=self.END_INDEX,
@@ -280,6 +298,8 @@ class StudyWordsView(SuccessMessageMixin, DetailView):
         return study_process(request, **self.get_data_session())
 
     def post(self, request, *args, **kwargs):
+        list_words = request.session.get('list_words')
+
         study_words = request.session.get('study_words')
         current_word_index = request.session.get('current_word_index')
 
