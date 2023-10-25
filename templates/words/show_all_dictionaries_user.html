@@ -9,7 +9,7 @@
 
     {% if dictionary_list %}
 
-        <h1>Your Dictionaries</h1>
+        <h1>Your Dictionaries {% if dictionary_list %}| {{ dictionary_list|length }} {% endif %} </h1>
 
         <div class="card-group">
             {% for dictionary in dictionary_list %}
