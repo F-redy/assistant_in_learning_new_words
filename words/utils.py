@@ -182,11 +182,7 @@ def study_process(request, **kwargs):
 
         if not study_words:
             db_words = kwargs['PairWord'].objects.filter(dictionary__slug=kwargs['dict_slug']).order_by('id')
-            # length_lst = abs(len(db_words) - end_index) if len(db_words) > 5 else len(db_words)
-            # message = f'{length_lst} word{("", "s")[length_lst > 1]} left out of {len(db_words)}'
-            # messages.info(request, message)
-
-            if start_index > len(db_words):
+            if start_index > len(db_words) - 1:
                 # если список слов закончился
                 level += 1
                 start_index, end_index = 0, 5
@@ -204,7 +200,6 @@ def study_process(request, **kwargs):
         title = ' '.join(kwargs["dict_slug"].split('-')).title()
         form = kwargs['RepeatWordForm']()
         reset_url = reverse('words:study_words', kwargs={'dict_slug': kwargs["dict_slug"]})
-
         context = {'translation': study_words[current_word_index]['pair'][1],
                    'title': f'Study {title}',
                    'form': form,
@@ -212,7 +207,6 @@ def study_process(request, **kwargs):
                    'reset_url': reset_url,
                    'words_left': request.session.get('words_left')
                    }
-
         return render(request, kwargs['template_name'], context)
     else:
         data_reset = {
