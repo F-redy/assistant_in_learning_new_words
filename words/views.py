@@ -277,7 +277,7 @@ class StudyWordsView(SuccessMessageMixin, DetailView):
 
         active_session = request.session.get('active_session')
 
-        if (active_session is not None or active_session is None) and active_session != kwargs[self.slug_url_kwarg]:
+        if active_session is None or active_session != kwargs[self.slug_url_kwarg]:
             request.session['list_words'] = None
             request.session['active_session'] = None
 
