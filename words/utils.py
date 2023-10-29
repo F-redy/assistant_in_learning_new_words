@@ -186,7 +186,7 @@ def study_process(request, **kwargs):
             # message = f'{length_lst} word{("", "s")[length_lst > 1]} left out of {len(db_words)}'
             # messages.info(request, message)
 
-            if start_index > len(db_words):
+            if start_index > len(db_words) - 1:
                 # если список слов закончился
                 level += 1
                 start_index, end_index = 0, 5
