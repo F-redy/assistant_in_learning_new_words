@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="title-color">Check answer</h1>
+    <div class="content-box">
+
+        {#        <form method="post">#}
+        {#            {% csrf_token %}#}
+        <div>
+
+            {% if custom_messages %}
+
+                {% if custom_messages.translation %}
+                    <h3>
+                        {% if not custom_messages.error_answer %}
+                            <span class="color-translation-title">You are right!</span>
+                        {% else %}
+                            correct answer for "{{ custom_messages.translation }}":
+                        {% endif %}
+                    </h3>
+                    <input type="text" value="{{ custom_messages.original }}" class="success-answer" readonly>
+                {% endif %}
+
+                <h3>{{ custom_messages.point }}</h3>
+
+                {% if custom_messages.error_answer %}
+                    <h3>Oops..wrong.</h3>
+                    <input type="text" value="{{ custom_messages.user_answer }}" class="error-answer" readonly>
+                {% endif %}
+
+            {% endif %}
+            <p class="button-inline">
+                <a href="{{ come_back_url }}">
+                    <button type="button" autofocus>CONTINUE</button>
+                </a>
+            </p>
+
+        </div>
+        {#        </form>#}
+    </div>
+
+{% endblock %}

@@ -1,61 +1,34 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <h1 class="title-color">Study: {{ title }}</h1>
+
     <div class="content-box">
 
         <form method="post">
             {% csrf_token %}
-            {#                <div class="sticky-box">#}
-            {#                    {% if messages %}#}
-            {#                        {% for message in messages %}#}
-            {#                            {% if message.tags == 'info' %}#}
-            {#                                <h3 class="info-message"> {{ message }}</h3>#}
-            {#                            {% endif %}#}
-            {#                        {% endfor %}#}
-            {#                    {% endif %}#}
-            {#                </div>#}
 
             <div class="translation-box">
-                <h3>{{ translation }}</h3>
+                <h3>
+                    <span class="color-translation-title">Enter translation for:</span>
+                    {{ custom_messages.translation }}
+{#                    {{ translation }}#}
+                </h3>
             </div>
             <br>
             <div class="label-box">
-                <span>{{ form.user_answer.label_tag }} </span>
+                <span class="color-translation-title">{{ form.user_answer.label_tag }} </span>
+                <p>{{ form.user_answer }}</p>
             </div>
 
-            <div class="input-box">
-                <span>{{ form.user_answer }}</span>
-                <p class="button-inline">
-                    <button type="submit">Send</button>
-                    <a href="{{ reset_url }}">
-                        <button type="button" class="red-button">RESET</button>
+            <p class="button-inline">
+                    <a href="{{ user_answer_url }}">
+                        <button type="submit">Answer</button>
                     </a>
+                    {#                    <a href="{{ reset_url }}">#}
+                    {#                        <button type="button" class="red-button">RESET</button>#}
+                    {#                    </a>#}
                 </p>
-            </div>
-
-
-            <div class="sticky-box">
-                {% if messages %}
-                    {% for message in messages %}
-
-                        {% if message.tags == 'info' %}
-
-                            {% if forloop.counter == 1 %}
-                                <h3>previous word: {{ message.message }}</h3>
-                            {% elif forloop.counter == 2 %}
-                                <h3>{{ message.message }}</h3>
-                            {% endif %}
-                            <br>
-                        {% elif message.tags == 'success' %}
-                            <h3>correct answer:</h3>
-                            <input type="text" value="{{ message }}" class="success-answer" readonly>
-                        {% elif message.tags == 'error' %}
-                            <h3>Oops..wrong.</h3>
-                            <input type="text" value="{{ message }}" class="error-answer" readonly>
-                        {% endif %}
-                    {% endfor %}
-                {% endif %}
-            </div>
         </form>
     </div>
 
