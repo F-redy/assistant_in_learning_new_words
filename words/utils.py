@@ -182,9 +182,6 @@ def study_process(request, **kwargs):
 
         if not study_words:
             db_words = kwargs['PairWord'].objects.filter(dictionary__slug=kwargs['dict_slug']).order_by('id')
-            # length_lst = abs(len(db_words) - end_index) if len(db_words) > 5 else len(db_words)
-            # message = f'{length_lst} word{("", "s")[length_lst > 1]} left out of {len(db_words)}'
-            # messages.info(request, message)
 
             if start_index > len(db_words) - 1:
                 # если список слов закончился
@@ -210,7 +207,6 @@ def study_process(request, **kwargs):
                    'form': form,
                    'slug': kwargs['dict_slug'],
                    'reset_url': reset_url,
-                   'words_left': request.session.get('words_left')
                    }
 
         return render(request, kwargs['template_name'], context)
