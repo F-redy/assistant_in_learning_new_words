@@ -1,0 +1,40 @@
+.content-box {
+    display: flex;
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    flex-direction: column; /* Переключаемся на вертикальное расположение элементов */
+    align-items: flex-start;
+    width: 60%;
+    height: 320px;
+    background-color: #3c5a73;
+    overflow: hidden;
+    border-radius: 10px;
+    border: none;
+    padding: 20px;
+    margin: auto;
+}
+
+.translation-box {
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.label-box {
+    font-size: 18px;
+    align-self: flex-end;
+}
+
+.sticky-box {
+    position: sticky;
+    top: 0;
+    background-color: rgba(18, 27, 65, 0.15);
+    padding: 10px; /* Отступ для улучшения внешнего вида */
+}
+
+.color-translation-title {
+    color: rgba(208, 213, 229, 0.8);
+}
+
+.title-color {
+    color: rgba(105, 108, 148, 0.7);
+}
