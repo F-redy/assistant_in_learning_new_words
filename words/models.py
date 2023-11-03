@@ -56,7 +56,7 @@ class UserLearningData(models.Model):
     dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     session_active = models.BooleanField(default=False)
-    level = models.IntegerField(default=0)
+    level = models.IntegerField(default=1)
     start_index = models.IntegerField(default=0)
     end_index = models.IntegerField(default=5)
     step = models.IntegerField(default=5)
@@ -67,7 +67,7 @@ class UserLearningData(models.Model):
     created_at = models.DateTimeField()
 
     def __str__(self):
-        return f'{self.dictionary} | {self.user} | {self.session_active}'
+        return f'{self.dictionary} | {self.user} | {self.session_active} | {self.level}'
 
     class Meta:
         unique_together = ('dictionary', 'user')
@@ -89,7 +89,7 @@ class UserLearningData(models.Model):
 
         return (now - created).days
 
-    def reset(self):
+    def reset_session(self):
         self.level = self._meta.get_field('level').get_default()
         self.start_index = self._meta.get_field('start_index').get_default()
         self.end_index = self._meta.get_field('end_index').get_default()
@@ -102,14 +102,12 @@ class UserLearningData(models.Model):
         self.session_active = self._meta.get_field('session_active').get_default()
         self.save()
 
-        print(self.level, self.start_index, self.end_index, self.step, self.stop_learning, self.point,
-              self.next_level_point, self.current_word_index, self.created_at, self.session_active)
-
     def __check_and_reset_learning_data(self, db_words: list[dict]) -> None:
         if self.start_index > len(db_words) - 1:
             self.level += 1
             self.start_index = 0
             self.end_index = self.step
+            self.save()
 
     def __filter_study_words(self, study_words: list[dict]) -> list[dict]:
         return list(filter(lambda pair: pair['point'] < self.next_level_point, study_words))
@@ -125,7 +123,6 @@ class UserLearningData(models.Model):
     def check_current_word_index(self, study_words):
         if self.current_word_index + 1 > len(study_words):
             self.current_word_index = 0
-            self.save()
 
     def update_current_word_index(self):
         self.current_word_index += 1
@@ -133,20 +130,20 @@ class UserLearningData(models.Model):
 
     def update_learning_data(self, study_words: list[dict]):
         if self.level > self.stop_learning:
-            self.reset()
+            self.reset_session()
             return
         if study_words:
             study_words = self.__filter_study_words(study_words)
-            print(f'line 148 {bool(study_words) = }')
+
         else:
             db_words = PairWord.objects.filter(dictionary=self.dictionary).order_by('id')
-            print(f'db: {bool(db_words) = }')
+
             # проверяем start_index
             self.__check_and_reset_learning_data(db_words)
 
             # Генерируем новый список слов
             study_words = self.__generate_study_words(db_words)
-            print(f'after db. {bool(study_words) = }')
+
             # обновляем star/end/current_index - index
             self.current_word_index = 0
             self.start_index = self.end_index
@@ -154,5 +151,5 @@ class UserLearningData(models.Model):
 
         self.check_current_word_index(study_words)
         self.save()
-        print(f'return {bool(study_words) = }')
+
         return study_words
