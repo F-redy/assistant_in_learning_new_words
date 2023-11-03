@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 class="title-color">Study: {{ title }}</h1>
+    <h1 class="title-color">Study: {{ title }} | level: {{ level }}</h1>
 
     <div class="content-box">
 
@@ -12,7 +12,6 @@
                 <h3>
                     <span class="color-translation-title">Enter translation for:</span>
                     {{ custom_messages.translation }}
-{#                    {{ translation }}#}
                 </h3>
             </div>
             <br>
