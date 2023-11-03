@@ -11,9 +11,9 @@ from common.views import DataMixin
 
 from .forms import (AddDictionaryForm, AddPairWordForm, ImportWordsForm,
                     PairWordForm, RepeatWordForm)
-from .models import Dictionary, PairWord
+from .models import Dictionary, PairWord, UserLearningData
 from .utils import (Slug, get_delete_and_updated_words, get_existing_originals,
-                    get_sep, get_unique_pairs, set_data_session, study_process)
+                    get_sep, get_unique_pairs)
 
 
 class AddDictionaryView(DataMixin, SuccessMessageMixin, CreateView):
@@ -124,9 +124,10 @@ class ShowDictionaryView(DetailView):
         return context
 
     def get_queryset(self):
-        dictionaries = Dictionary.objects.filter(user_id=self.request.user.pk)
-        dictionaries = dictionaries.annotate(count_words=Count('pairword'))
-        return dictionaries
+        dictionary = Dictionary.objects.filter(user_id=self.request.user.pk, slug=self.kwargs[self.slug_url_kwarg])
+        dictionary = dictionary.annotate(count_words=Count('pairword'))
+
+        return dictionary
 
 
 class UpdateDictionaryView(SuccessMessageMixin, UpdateView):
@@ -191,6 +192,7 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
     slug_url_kwarg = 'dict_slug'
 
     def _process_word(self, request, **kwargs):
+        custom_messages = kwargs.get('custom_messages', {})
         words = PairWord.objects.filter(dictionary__slug=kwargs['dict_slug']).order_by('id')
         current_word_index = request.session.get('current_word_index', 0)
 
@@ -205,10 +207,17 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
             form = RepeatWordForm()
             reset_url = reverse('words:repeat_words', kwargs={'dict_slug': kwargs["dict_slug"]})
 
+            custom_messages.update({
+                'translation': translation,
+                'original': original,
+            })
+
             context = {'translation': translation,
                        'title': f'Repeat {title}',
                        'form': form,
-                       'reset_url': reset_url}
+                       'reset_url': reset_url,
+                       'custom_messages': custom_messages,
+                       }
 
             return render(request, self.template_name, context)
         else:
@@ -227,90 +236,127 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
         user_answer = self.request.POST.get('user_answer', '')
         get_original = request.session.get('original')
         get_translation = request.session.get('translation')
+        error_answer = None
 
         request.session['current_word_index'] += 1
 
-        if user_answer == get_original:
-            messages.info(request, f'{get_original}')
-            messages.success(request, f'{user_answer}')
+        if user_answer != get_original:
+            error_answer = True
 
-        else:
-            request.session.get('error_words', []).append((get_original, get_translation))
-            messages.info(request, f'{get_translation}')
-            messages.error(request, f'{user_answer}')
-            messages.success(request, f'{get_original}')
 
         return self._process_word(request, **kwargs)
 
 
-class StudyWordsView(SuccessMessageMixin, DetailView):
+class StudyWordsView(DetailView):
     model = Dictionary
     template_name = 'words/study_words.html'
     slug_url_kwarg = 'dict_slug'
-    START_INDEX = 0
-    END_INDEX = 5
-    STEP_INDEX = 5
-    STOP_LEARNING = 6
-    NEXT_LEVEL_POINT = 5
-    LEVEL = 1
-    CURRENT_WORD_INDEX = 0
-    POINT = 0
 
-    def get_data_session(self):
-        return {'LEVEL': self.LEVEL,
-                'STOP_LEARNING': self.STOP_LEARNING,
-                'NEXT_LEVEL_POINT': self.NEXT_LEVEL_POINT,
-                'CURRENT_WORD_INDEX': self.CURRENT_WORD_INDEX,
-                'START_INDEX': self.START_INDEX,
-                'END_INDEX': self.END_INDEX,
-                'STEP_INDEX': self.STEP_INDEX,
-                'POINT': self.POINT,
-                'template_name': self.template_name,
-                'dict_slug': self.kwargs['dict_slug'],
-                'RepeatWordForm': RepeatWordForm,
-                'PairWord': PairWord,
-                }
+    def __init__(self):
+        super().__init__()
+        self.active_session = None
+        self.study_words = None
+        self.custom_messages = {}
+
+    def get_study_words_url(self):
+        return str(reverse_lazy('words:study_words', kwargs={'dict_slug': self.kwargs["dict_slug"]}))
+
+    def set_or_create_active_session(self):
+        user = self.request.user
+        dictionary = Dictionary.objects.filter(slug=self.kwargs['dict_slug'], user=user).first()
+        active_session, _ = UserLearningData.objects.get_or_create(
+            dictionary=dictionary, user=user
+        )
+        if not active_session.session_active:
+            active_session.session_active = True
+        if active_session.check_days() or active_session.level > active_session.stop_learning:
+            active_session.reset_session()
+
+        self.active_session = active_session
 
     def get(self, request, *args, **kwargs):
-        set_data_session(request, study_words=[],
-                         start_index=self.START_INDEX,
-                         end_index=self.END_INDEX,
-                         level=1,
-                         current_word_index=0)
-        return study_process(request, **self.get_data_session())
+        self.set_or_create_active_session()
+        self.check_session_and_reset_data()
+
+        self.study_words = self.active_session.update_learning_data(self.request.session.get('study_words'))
+
+        if self.study_words and (self.active_session.level < self.active_session.stop_learning + 1):
+            self.set_custom_messages()
+            context = self.get_common_context(kwargs['dict_slug'])
+
+            return render(request, 'words/study_words.html', context=context)
+
+        self.request.session['study_words'] = None
+        self.request.session['dictionary_session'] = None
+        return redirect(reverse('words:repeat_words', kwargs={'dict_slug': kwargs['dict_slug']}))
 
     def post(self, request, *args, **kwargs):
-        study_words = request.session.get('study_words')
-        current_word_index = request.session.get('current_word_index')
+        self.set_or_create_active_session()
+        self.check_session_and_reset_data()
 
-        user_answer = self.request.POST.get('user_answer', '').strip().lower()
+        self.study_words = self.active_session.update_learning_data(self.request.session.get('study_words'))
 
-        original = study_words[current_word_index]['pair'][0]
-        translation = study_words[current_word_index]['pair'][1]
-        point = study_words[current_word_index]['point']
+        if self.study_words:
+            self.set_custom_messages(check_user_answer=True)
+            self.active_session.update_current_word_index()
 
-        if user_answer == original:
-            point += 1
-            if point > 4:
-                point_message = 'pair goes next level'
+            context = self.get_common_context(kwargs['dict_slug'])
+
+            return render(request, 'words/user_answer.html', context=context)
+
+        return redirect(reverse('words:repeat_words', kwargs={'dict_slug': kwargs['dict_slug']}))
+
+    def check_session_and_reset_data(self):
+        if self.active_session.dictionary.slug != self.request.session.get('dictionary_session'):
+            self.request.session['study_words'] = None
+            self.request.session['dictionary_session'] = None
+
+    def set_custom_messages(self, check_user_answer=False):
+        self.custom_messages = {}
+        point_message = ''
+        user_answer = ''
+
+        original, translation = self.study_words[self.active_session.current_word_index]['pair']
+        point = self.study_words[self.active_session.current_word_index]['point']
+
+        if check_user_answer:
+            user_answer = self.request.POST.get('user_answer', '').strip().lower()
+
+            if user_answer == original:
+                point += 1
+                if point > 4:
+                    point_message = 'pair goes next level'
+                else:
+                    point_message = f'point: {point}'
             else:
-                point_message = f'point {point}'
-            messages.info(request, f'{translation}')
-            messages.info(request, f'{point_message}')
-            messages.success(request, f'{user_answer}')
+                point -= 1
+                point_message = f'point: {point}'
+                self.custom_messages['error_answer'] = True
 
-            study_words[current_word_index]['point'] = point
-        else:
-            study_words[current_word_index]['point'] -= 1
+        self.study_words[self.active_session.current_word_index]['point'] = point
 
-            messages.info(request, f'{translation}')
-            messages.info(request, f'point: {point - 1}')
-            messages.error(request, f'{user_answer}')
-            messages.success(request, f'{original}')
+        self.custom_messages.update({
+            'translation': translation,
+            'original': original,
+            'point': point_message,
+            'user_answer': user_answer,
+        })
+        self.study_words = self.active_session.update_learning_data(study_words=self.study_words)
+        self.request.session['study_words'] = self.study_words
+        self.request.session['dictionary_session'] = self.active_session.dictionary.slug
 
-        set_data_session(request, study_words=study_words, current_word_index=current_word_index + 1)
+    def get_common_context(self, dictionary_slug):
 
-        return study_process(request, **self.get_data_session())
+        title = ' '.join(dictionary_slug.split('-')).title()
+        context = {
+            'title': title,
+            'form': RepeatWordForm(),
+            'dict_slug': self.kwargs['dict_slug'],
+            'user_answer_url': self.get_study_words_url(),
+            'custom_messages': self.custom_messages,
+            'level': self.active_session.level
+        }
+        return context
 
 
 def show_error_words(request):

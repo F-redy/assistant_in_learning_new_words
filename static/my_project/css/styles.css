@@ -105,18 +105,4 @@ button {
     text-align: center;
 }
 
-.label-box {
-    font-size: 18px;
-}
 
-.content-box {
-    display: flex;
-    justify-content: center;
-}
-
-.sticky-box {
-    position: sticky;
-    top: 0;
-    background-color: rgba(18, 27, 65, 0.15);
-    padding: 10px; /* Отступ для улучшения внешнего вида */
-}

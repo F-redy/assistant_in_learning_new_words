@@ -205,7 +205,6 @@ def study_process(request, **kwargs):
                    'form': form,
                    'slug': kwargs['dict_slug'],
                    'reset_url': reset_url,
-                   'words_left': request.session.get('words_left')
                    }
         return render(request, kwargs['template_name'], context)
     else:
