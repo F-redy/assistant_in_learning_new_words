@@ -23,13 +23,13 @@ class SignUpView(CreateView):
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
-        return redirect("home")
+        return redirect("words:show_dictionaries")
 
 
 class LogInView(LoginView):
     form_class = CustomAuthenticationForm
     template_name = "users/login.html"
-    success_url = reverse_lazy("home")
+    success_url = reverse_lazy("words:show_dictionaries")
 
     def get_context_data(self, **kwargs):
         context = super(LogInView, self).get_context_data(**kwargs)
