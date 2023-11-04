@@ -65,7 +65,7 @@ class RepeatWordForm(forms.Form):
         widget=forms.TextInput(
             attrs={
                 'type': 'text',
-                'style': 'width: 300px;',
+                'class': 'user-answer',
                 'autofocus': True,
                 'placeholder': 'Enter your answer...',
             }),
