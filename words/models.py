@@ -1,7 +1,6 @@
 from datetime import datetime
 from random import shuffle
 
-from django.utils import timezone
 from django.db import models
 from django.db.models import QuerySet
 from django.urls import reverse
@@ -60,7 +59,7 @@ class UserLearningData(models.Model):
     start_index = models.IntegerField(default=0)
     end_index = models.IntegerField(default=5)
     step = models.IntegerField(default=5)
-    stop_learning = models.IntegerField(default=5)
+    stop_learning = models.IntegerField(default=3)
     point = models.IntegerField(default=0)
     next_level_point = models.IntegerField(default=5)
     current_word_index = models.IntegerField(default=0)
