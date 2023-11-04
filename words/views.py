@@ -243,7 +243,6 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
         if user_answer != get_original:
             error_answer = True
 
-
         return self._process_word(request, **kwargs)
 
 
@@ -349,12 +348,11 @@ class StudyWordsView(DetailView):
 
         title = ' '.join(dictionary_slug.split('-')).title()
         context = {
-            'title': title,
+            'title': f'Study: {title} | level: {self.active_session.level}',
             'form': RepeatWordForm(),
             'dict_slug': self.kwargs['dict_slug'],
             'user_answer_url': self.get_study_words_url(),
             'custom_messages': self.custom_messages,
-            'level': self.active_session.level
         }
         return context
 
