@@ -1,6 +1,9 @@
 .body-wrapper {
+    position: relative;
     width: 80%; /* Ширина обертки */
     height: 90%; /* Увеличьте высоту  */
+    min-height: 800px;
+    min-width: 800px;
     margin: 0 auto; /* Центрирование обертки по горизонтали */
     padding: 20px 40px 20px 20px; /* Отступы внутри обертки по вашему выбору */
     color: #eeeeee;
@@ -87,19 +90,6 @@ button {
     color: #4ac1f7;
 }
 
-.success-answer {
-    background-color: #217e3b;
-    color: #faf7f7;
-    font-size: 18px;
-    width: 300px;
-}
-
-.error-answer {
-    background-color: #7e0404;
-    color: #faf7f7;
-    font-size: 18px;
-    width: 300px;
-}
 
 .text-center {
     text-align: center;
