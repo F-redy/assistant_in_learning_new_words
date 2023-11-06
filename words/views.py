@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Count
@@ -191,59 +193,98 @@ class RepeatWordsView(SuccessMessageMixin, DetailView):
     template_name = 'words/study_words.html'
     slug_url_kwarg = 'dict_slug'
 
-    def _process_word(self, request, **kwargs):
-        custom_messages = kwargs.get('custom_messages', {})
-        words = PairWord.objects.filter(dictionary__slug=kwargs['dict_slug']).order_by('id')
-        current_word_index = request.session.get('current_word_index', 0)
+    def get_context(self, **kwargs):
+        title = ' '.join(kwargs["dict_slug"].split('-')).title()
+        form = RepeatWordForm()
+        reset_url = kwargs.get('reset_url')
+        current_word_index = kwargs['request'].session.get('current_word_index') or 0
+        custom_messages = {
+            'translation': kwargs['translation'],
+            'original': kwargs['original'],
+        }
 
-        if current_word_index < len(words):
-            original = words[current_word_index].original
-            translation = words[current_word_index].translation
+        if kwargs.get('user_answer'):
+            custom_messages['error_answer'] = kwargs['user_answer'] != kwargs.get('original')
+            custom_messages['user_answer'] = kwargs.get('user_answer')
+            kwargs['request'].session['current_word_index'] = current_word_index + 1
 
-            request.session['original'] = original
-            request.session['translation'] = translation
+            if kwargs['user_answer'] != kwargs.get('original'):
+                error_words = kwargs['request'].session.get('error_words') or list()
+                error_words.append((kwargs['original'], kwargs['translation']))
+                kwargs['request'].session['error_words'] = error_words
+        length = kwargs["request"].session.get("words")
+        if length:
+            length = len(length)
+        context = {
+            'title': f'Repeat {title} | {current_word_index + 1}/{length}',
+            'form': form,
+            'reset_url': reset_url,
+            'custom_messages': custom_messages,
+        }
 
-            title = ' '.join(self.kwargs["dict_slug"].split('-')).title()
-            form = RepeatWordForm()
-            reset_url = reverse('words:repeat_words', kwargs={'dict_slug': kwargs["dict_slug"]})
+        return context
 
-            custom_messages.update({
-                'translation': translation,
-                'original': original,
-            })
+    @staticmethod
+    def check_dict_session(request, **kwargs):
+        if kwargs['dict_slug'] != request.session.get('dict_session'):
+            request.session['dict_session'] = kwargs['dict_slug']
 
-            context = {'translation': translation,
-                       'title': f'Repeat {title}',
-                       'form': form,
-                       'reset_url': reset_url,
-                       'custom_messages': custom_messages,
-                       }
+    def get_pair(self, request, **kwargs):
+        self.check_dict_session(request, **kwargs)
 
-            return render(request, self.template_name, context)
-        else:
-            # Все слова уже отгаданы или список слов пуст
-            request.session['current_word_index'] = 0
-            request.session['original'] = ''
-            request.session['translation'] = ''
-            return redirect('words:congratulations')
+        words = request.session.get('words')
+        current_word_index = request.session.get('current_word_index') or 0
+
+        if words is None:
+            request.session['error_words'] = None
+            words = PairWord.objects.filter(dictionary__slug=kwargs['dict_slug'])
+            words = [(pair.original, pair.translation) for pair in words]
+            shuffle(words)
+
+        if current_word_index < len(words) - 1:
+            original = words[current_word_index][0]
+            translation = words[current_word_index][1]
+            request.session['words'] = words
+            return original, translation
 
     def get(self, request, *args, **kwargs):
+        pair = self.get_pair(request, **kwargs)
+
+        if pair:
+            context = self.get_context(
+                **{
+                    'request': request,
+                    'dict_slug': kwargs["dict_slug"],
+                    'translation': pair[1],
+                    'original': pair[0],
+                }
+            )
+
+            return render(request, 'words/study_words.html', context=context)
+
         request.session['current_word_index'] = 0
-        request.session['error_words'] = []
-        return self._process_word(request, **kwargs)
+        request.session['words'] = None
+        return redirect('words:congratulations')
 
     def post(self, request, *args, **kwargs):
-        user_answer = self.request.POST.get('user_answer', '')
-        get_original = request.session.get('original')
-        get_translation = request.session.get('translation')
-        error_answer = None
+        user_answer = self.request.POST.get('user_answer')
+        pair = self.get_pair(request, **kwargs)
 
-        request.session['current_word_index'] += 1
+        if pair:
+            context = self.get_context(
+                **{
+                    'request': request,
+                    'dict_slug': kwargs["dict_slug"],
+                    'translation': pair[1],
+                    'original': pair[0],
+                    'user_answer': user_answer,
+                }
+            )
+            return render(request, 'words/user_answer.html', context=context)
 
-        if user_answer != get_original:
-            error_answer = True
-
-        return self._process_word(request, **kwargs)
+        request.session['current_word_index'] = 0
+        request.session['words'] = None
+        return redirect('words:congratulations')
 
 
 class StudyWordsView(DetailView):
