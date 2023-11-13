@@ -294,102 +294,48 @@ class StudyWordsView(DetailView):
 
     def __init__(self):
         super().__init__()
-        self.active_session = None
-        self.study_words = None
+        self.game_session = None
+        self.study_service = None
         self.custom_messages = {}
 
-    def get_study_words_url(self):
-        return str(reverse_lazy('words:study_words', kwargs={'dict_slug': self.kwargs["dict_slug"]}))
-
-    def set_or_create_active_session(self):
-        user = self.request.user
-        dictionary = Dictionary.objects.filter(slug=self.kwargs['dict_slug'], user=user).first()
-        active_session, _ = UserLearningData.objects.get_or_create(
-            dictionary=dictionary, user=user
-        )
-        if not active_session.session_active:
-            active_session.session_active = True
-        if active_session.check_days() or active_session.level > active_session.stop_learning:
-            active_session.reset_session()
-
-        self.active_session = active_session
-
     def get(self, request, *args, **kwargs):
-        self.set_or_create_active_session()
-        self.check_session_and_reset_data()
+        self.get_study_data(request, *args, **kwargs)
 
-        self.study_words = self.active_session.update_learning_data(self.request.session.get('study_words'))
-
-        if self.study_words and (self.active_session.level < self.active_session.stop_learning + 1):
-            self.set_custom_messages()
+        if self.study_service.study_words and self.custom_messages:
             context = self.get_common_context(kwargs['dict_slug'])
 
             return render(request, 'words/study_words.html', context=context)
 
-        self.request.session['study_words'] = None
-        self.request.session['dictionary_session'] = None
+        self.game_session.reset_data_active_session()
         return redirect(reverse('words:repeat_words', kwargs={'dict_slug': kwargs['dict_slug']}))
 
     def post(self, request, *args, **kwargs):
-        self.set_or_create_active_session()
-        self.check_session_and_reset_data()
+        self.get_study_data(request, *args, **kwargs)
 
-        self.study_words = self.active_session.update_learning_data(self.request.session.get('study_words'))
-
-        if self.study_words:
-            self.set_custom_messages(check_user_answer=True)
-            self.active_session.update_current_word_index()
-
+        if self.study_service.study_words and self.custom_messages:
             context = self.get_common_context(kwargs['dict_slug'])
+            self.game_session.update_current_word_index()
 
             return render(request, 'words/user_answer.html', context=context)
 
+        self.game_session.reset_data_active_session()
         return redirect(reverse('words:repeat_words', kwargs={'dict_slug': kwargs['dict_slug']}))
 
-    def check_session_and_reset_data(self):
-        if self.active_session.dictionary.slug != self.request.session.get('dictionary_session'):
-            self.request.session['study_words'] = None
-            self.request.session['dictionary_session'] = None
+    def get_study_data(self, request, *args, **kwargs):
+        self.game_session = SessionService(request, kwargs['dict_slug'])
+        self.study_service = StudyWordsService(request, self.game_session)
+        self.custom_messages = CustomMessagesService(
+            request, self.game_session.active_session.current_word_index, self.study_service.study_words
+        ).custom_messages
 
-    def set_custom_messages(self, check_user_answer=False):
-        self.custom_messages = {}
-        point_message = ''
-        user_answer = ''
-
-        original, translation = self.study_words[self.active_session.current_word_index]['pair']
-        point = self.study_words[self.active_session.current_word_index]['point']
-
-        if check_user_answer:
-            user_answer = self.request.POST.get('user_answer', '').strip().lower()
-
-            if user_answer == original:
-                point += 1
-                if point > 4:
-                    point_message = 'pair goes next level'
-                else:
-                    point_message = f'point: {point}'
-            else:
-                point -= 1
-                point_message = f'point: {point}'
-                self.custom_messages['error_answer'] = True
-
-        self.study_words[self.active_session.current_word_index]['point'] = point
-
-        self.custom_messages.update({
-            'translation': translation,
-            'original': original,
-            'point': point_message,
-            'user_answer': user_answer,
-        })
-        self.study_words = self.active_session.update_learning_data(study_words=self.study_words)
-        self.request.session['study_words'] = self.study_words
-        self.request.session['dictionary_session'] = self.active_session.dictionary.slug
+    def get_study_words_url(self):
+        return str(reverse_lazy('words:study_words', kwargs={'dict_slug': self.kwargs["dict_slug"]}))
 
     def get_common_context(self, dictionary_slug):
 
         title = ' '.join(dictionary_slug.split('-')).title()
         context = {
-            'title': f'Study: {title} | level: {self.active_session.level}',
+            'title': f'Study: {title} | level: {self.game_session.active_session.level}',
             'form': RepeatWordForm(),
             'dict_slug': self.kwargs['dict_slug'],
             'user_answer_url': self.get_study_words_url(),
